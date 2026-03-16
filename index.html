@@ -1,0 +1,800 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SAGA Apartment Bot — @Poschuck_bot</title>
+<meta name="description" content="Automatische Wohnungsbewerbungen für SAGA Hamburg. Kein Verpassen mehr.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --black: #0a0a0a;
+    --white: #f5f2ec;
+    --gold: #c9a84c;
+    --gold-light: #e8d5a3;
+    --gray: #6b6b6b;
+    --card-bg: #141414;
+    --border: rgba(201,168,76,0.2);
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--black);
+    color: var(--white);
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 300;
+    overflow-x: hidden;
+  }
+
+  /* ── Lang switcher ── */
+  .lang-bar {
+    position: fixed; top: 0; left: 0; right: 0;
+    z-index: 100;
+    display: flex; justify-content: flex-end; align-items: center;
+    padding: 1rem 2rem;
+    background: linear-gradient(to bottom, rgba(10,10,10,0.95), transparent);
+    gap: 0.5rem;
+  }
+  .lang-btn {
+    background: none; border: 1px solid var(--border);
+    color: var(--gray); font-family: 'DM Sans', sans-serif;
+    font-size: 0.75rem; letter-spacing: 0.1em;
+    padding: 0.3rem 0.7rem; border-radius: 2px;
+    cursor: pointer; transition: all 0.2s;
+  }
+  .lang-btn.active, .lang-btn:hover {
+    border-color: var(--gold); color: var(--gold);
+  }
+
+  /* ── Hero ── */
+  .hero {
+    min-height: 100vh;
+    display: flex; flex-direction: column;
+    justify-content: center; align-items: center;
+    text-align: center;
+    padding: 6rem 2rem 4rem;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse 80% 60% at 50% 0%, rgba(201,168,76,0.08), transparent 70%);
+    pointer-events: none;
+  }
+  .hero-label {
+    font-size: 0.7rem; letter-spacing: 0.25em;
+    color: var(--gold); text-transform: uppercase;
+    margin-bottom: 2rem;
+    opacity: 0; animation: fadeUp 0.8s 0.2s forwards;
+  }
+  .hero-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: clamp(3rem, 8vw, 7rem);
+    line-height: 1.05;
+    margin-bottom: 1.5rem;
+    opacity: 0; animation: fadeUp 0.8s 0.4s forwards;
+  }
+  .hero-title em {
+    font-style: italic; color: var(--gold);
+  }
+  .hero-sub {
+    font-size: clamp(1rem, 2vw, 1.2rem);
+    color: var(--gray); max-width: 520px;
+    line-height: 1.7; margin-bottom: 3rem;
+    opacity: 0; animation: fadeUp 0.8s 0.6s forwards;
+  }
+  .hero-cta {
+    display: inline-flex; align-items: center; gap: 0.7rem;
+    background: var(--gold); color: var(--black);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.9rem; font-weight: 500;
+    letter-spacing: 0.05em;
+    padding: 1rem 2.2rem; border-radius: 2px;
+    text-decoration: none;
+    transition: all 0.25s;
+    opacity: 0; animation: fadeUp 0.8s 0.8s forwards;
+  }
+  .hero-cta:hover {
+    background: var(--gold-light); transform: translateY(-2px);
+    box-shadow: 0 12px 40px rgba(201,168,76,0.25);
+  }
+  .hero-cta svg { width: 18px; height: 18px; }
+
+  /* ── Scroll indicator ── */
+  .scroll-hint {
+    position: absolute; bottom: 2rem; left: 50%;
+    transform: translateX(-50%);
+    display: flex; flex-direction: column; align-items: center;
+    gap: 0.5rem; color: var(--gray); font-size: 0.7rem;
+    letter-spacing: 0.15em; text-transform: uppercase;
+    opacity: 0; animation: fadeUp 1s 1.2s forwards;
+  }
+  .scroll-line {
+    width: 1px; height: 40px;
+    background: linear-gradient(to bottom, var(--gold), transparent);
+    animation: scrollPulse 2s ease-in-out infinite;
+  }
+
+  /* ── How it works ── */
+  .section {
+    padding: 7rem 2rem;
+    max-width: 1100px; margin: 0 auto;
+  }
+  .section-label {
+    font-size: 0.7rem; letter-spacing: 0.25em;
+    color: var(--gold); text-transform: uppercase;
+    margin-bottom: 1rem;
+  }
+  .section-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    line-height: 1.1; margin-bottom: 4rem;
+  }
+
+  .steps {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1px;
+    border: 1px solid var(--border);
+  }
+  .step {
+    padding: 2.5rem 2rem;
+    border-right: 1px solid var(--border);
+    position: relative;
+    transition: background 0.3s;
+  }
+  .step:last-child { border-right: none; }
+  .step:hover { background: rgba(201,168,76,0.04); }
+  .step-num {
+    font-family: 'DM Serif Display', serif;
+    font-size: 3rem; color: var(--border);
+    line-height: 1; margin-bottom: 1.2rem;
+  }
+  .step h3 {
+    font-size: 1rem; font-weight: 500;
+    margin-bottom: 0.7rem; color: var(--white);
+  }
+  .step p { font-size: 0.9rem; color: var(--gray); line-height: 1.6; }
+
+  /* ── Features ── */
+  .features-wrap {
+    background: var(--card-bg);
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    padding: 7rem 2rem;
+  }
+  .features {
+    max-width: 1100px; margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4rem;
+    align-items: center;
+  }
+  @media (max-width: 720px) {
+    .features { grid-template-columns: 1fr; }
+  }
+  .feature-list { list-style: none; }
+  .feature-list li {
+    display: flex; align-items: flex-start; gap: 1rem;
+    padding: 1.2rem 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .feature-list li:last-child { border-bottom: none; }
+  .feat-icon {
+    width: 36px; height: 36px; flex-shrink: 0;
+    border: 1px solid var(--border); border-radius: 2px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1rem;
+  }
+  .feat-text h4 { font-size: 0.95rem; font-weight: 500; margin-bottom: 0.3rem; }
+  .feat-text p { font-size: 0.85rem; color: var(--gray); line-height: 1.5; }
+
+  /* ── Pricing ── */
+  .pricing {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 1px;
+    border: 1px solid var(--border);
+    margin-top: 3rem;
+  }
+  .plan {
+    padding: 2.5rem 2rem;
+    border-right: 1px solid var(--border);
+    position: relative;
+    transition: background 0.3s;
+  }
+  .plan:last-child { border-right: none; }
+  .plan.featured {
+    background: rgba(201,168,76,0.06);
+  }
+  .plan-badge {
+    position: absolute; top: 1.5rem; right: 1.5rem;
+    background: var(--gold); color: var(--black);
+    font-size: 0.65rem; font-weight: 500;
+    letter-spacing: 0.1em; text-transform: uppercase;
+    padding: 0.2rem 0.6rem; border-radius: 2px;
+  }
+  .plan-name {
+    font-size: 0.75rem; letter-spacing: 0.15em;
+    color: var(--gold); text-transform: uppercase;
+    margin-bottom: 1rem;
+  }
+  .plan-price {
+    font-family: 'DM Serif Display', serif;
+    font-size: 3rem; line-height: 1;
+    margin-bottom: 0.3rem;
+  }
+  .plan-period { font-size: 0.8rem; color: var(--gray); margin-bottom: 1.5rem; }
+  .plan-features { list-style: none; }
+  .plan-features li {
+    font-size: 0.85rem; color: var(--gray);
+    padding: 0.4rem 0;
+    display: flex; align-items: center; gap: 0.6rem;
+  }
+  .plan-features li::before {
+    content: '—'; color: var(--gold); flex-shrink: 0;
+  }
+
+  /* ── FAQ ── */
+  .faq-list { margin-top: 3rem; }
+  .faq-item {
+    border-bottom: 1px solid var(--border);
+    padding: 1.5rem 0;
+    cursor: pointer;
+  }
+  .faq-q {
+    font-size: 1rem; font-weight: 500;
+    display: flex; justify-content: space-between;
+    align-items: center; gap: 1rem;
+  }
+  .faq-q::after {
+    content: '+'; color: var(--gold);
+    font-size: 1.4rem; font-weight: 300;
+    transition: transform 0.3s; flex-shrink: 0;
+  }
+  .faq-item.open .faq-q::after { transform: rotate(45deg); }
+  .faq-a {
+    font-size: 0.9rem; color: var(--gray);
+    line-height: 1.7; max-height: 0;
+    overflow: hidden; transition: max-height 0.4s ease, padding 0.3s;
+  }
+  .faq-item.open .faq-a { max-height: 300px; padding-top: 1rem; }
+
+  /* ── CTA bottom ── */
+  .cta-section {
+    text-align: center;
+    padding: 8rem 2rem;
+    position: relative; overflow: hidden;
+  }
+  .cta-section::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse 60% 60% at 50% 100%, rgba(201,168,76,0.1), transparent 70%);
+  }
+  .cta-section .section-title { margin-bottom: 1.5rem; }
+  .cta-section .hero-sub { margin: 0 auto 3rem; }
+
+  /* ── Footer ── */
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 2rem;
+    text-align: center;
+    font-size: 0.8rem; color: var(--gray);
+  }
+
+  /* ── Animations ── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes scrollPulse {
+    0%, 100% { opacity: 0.3; }
+    50%       { opacity: 1; }
+  }
+
+  /* ── Mobile ── */
+  @media (max-width: 600px) {
+    .steps { grid-template-columns: 1fr; }
+    .step { border-right: none; border-bottom: 1px solid var(--border); }
+    .step:last-child { border-bottom: none; }
+    .pricing { grid-template-columns: 1fr; }
+    .plan { border-right: none; border-bottom: 1px solid var(--border); }
+    .plan:last-child { border-bottom: none; }
+  }
+
+  /* ── Lang sections ── */
+  .lang-section { display: none; }
+  .lang-section.active { display: block; }
+</style>
+</head>
+<body>
+
+<!-- Lang switcher -->
+<div class="lang-bar">
+  <button class="lang-btn active" onclick="setLang('de')">DE</button>
+  <button class="lang-btn" onclick="setLang('uk')">UA</button>
+  <button class="lang-btn" onclick="setLang('en')">EN</button>
+</div>
+
+<!-- ═══════════ DEUTSCH ═══════════ -->
+<div id="lang-de" class="lang-section active">
+
+<section class="hero">
+  <div class="hero-label">SAGA Hamburg · Automatisch bewerben</div>
+  <h1 class="hero-title">Keine Wohnung<br><em>mehr verpassen.</em></h1>
+  <p class="hero-sub">Der Bot findet neue SAGA-Wohnungen, bewirbt sich sofort und nimmt Besichtigungseinladungen an — automatisch, rund um die Uhr.</p>
+  <a href="https://t.me/Poschuck_bot" class="hero-cta">
+    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.562 8.248l-2.04 9.613c-.152.68-.555.846-1.125.527l-3.107-2.29-1.498 1.441c-.166.166-.305.305-.625.305l.223-3.164 5.754-5.194c.25-.223-.055-.346-.387-.123L7.37 14.69l-3.04-.95c-.66-.207-.673-.66.138-.977l11.875-4.578c.55-.198 1.031.133.22.063z"/></svg>
+    Kostenlos starten
+  </a>
+  <div class="scroll-hint">
+    <div class="scroll-line"></div>
+    Mehr erfahren
+  </div>
+</section>
+
+<div class="section">
+  <div class="section-label">So funktioniert es</div>
+  <h2 class="section-title">In 3 Schritten<br>zur Traumwohnung</h2>
+  <div class="steps">
+    <div class="step">
+      <div class="step-num">01</div>
+      <h3>Registrieren</h3>
+      <p>Immomio-Konto verbinden, Filter setzen — fertig. Alles in Telegram, kein App-Download.</p>
+    </div>
+    <div class="step">
+      <div class="step-num">02</div>
+      <h3>Bot läuft</h3>
+      <p>Alle 15 Sekunden scannt der Bot saga.hamburg nach neuen Wohnungen und bewirbt sich sofort.</p>
+    </div>
+    <div class="step">
+      <div class="step-num">03</div>
+      <h3>Einzug</h3>
+      <p>Du bekommst eine Nachricht wenn eine Besichtigung bestätigt wird. Einfach hingehen.</p>
+    </div>
+  </div>
+</div>
+
+<div class="features-wrap">
+  <div class="features">
+    <div>
+      <div class="section-label">Funktionen</div>
+      <h2 class="section-title">Alles was<br>du brauchst</h2>
+    </div>
+    <ul class="feature-list">
+      <li>
+        <div class="feat-icon">⚡</div>
+        <div class="feat-text">
+          <h4>15-Sekunden-Scan</h4>
+          <p>Neue Wohnungen werden in Sekunden gefunden und beworben — bevor andere es sehen.</p>
+        </div>
+      </li>
+      <li>
+        <div class="feat-icon">🔍</div>
+        <div class="feat-text">
+          <h4>Smarte Filter</h4>
+          <p>Zimmeranzahl, Mietpreis, Stadtbezirk — nur relevante Wohnungen.</p>
+        </div>
+      </li>
+      <li>
+        <div class="feat-icon">📬</div>
+        <div class="feat-text">
+          <h4>Status-Updates</h4>
+          <p>Benachrichtigung wenn deine Bewerbung angesehen oder eine Einladung verschickt wurde.</p>
+        </div>
+      </li>
+      <li>
+        <div class="feat-icon">👥</div>
+        <div class="feat-text">
+          <h4>Freunde einladen</h4>
+          <p>Für jeden eingeladenen Nutzer bekommst du 3 Tage gratis dazu.</p>
+        </div>
+      </li>
+    </ul>
+  </div>
+</div>
+
+<div class="section">
+  <div class="section-label">Preise</div>
+  <h2 class="section-title">Einfach.<br>Transparent.</h2>
+  <div class="pricing">
+    <div class="plan">
+      <div class="plan-name">Starter</div>
+      <div class="plan-price">€19</div>
+      <div class="plan-period">pro Monat</div>
+      <ul class="plan-features">
+        <li>15-Sekunden-Scan</li>
+        <li>Automatische Bewerbung</li>
+        <li>Filter & Benachrichtigungen</li>
+      </ul>
+    </div>
+    <div class="plan featured">
+      <div class="plan-badge">Beliebt</div>
+      <div class="plan-name">Standard</div>
+      <div class="plan-price">€29</div>
+      <div class="plan-period">2 Monate · 24% Rabatt</div>
+      <ul class="plan-features">
+        <li>Alles aus Starter</li>
+        <li>Status-Tracking</li>
+        <li>Priorität-Support</li>
+      </ul>
+    </div>
+    <div class="plan">
+      <div class="plan-name">Premium</div>
+      <div class="plan-price">€39</div>
+      <div class="plan-period">4 Monate · +1 Monat gratis</div>
+      <ul class="plan-features">
+        <li>Alles aus Standard</li>
+        <li>1 Bonus-Monat</li>
+        <li>Frühzugang zu neuen Features</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <div class="section-label">FAQ</div>
+  <h2 class="section-title">Häufige<br>Fragen</h2>
+  <div class="faq-list">
+    <div class="faq-item">
+      <div class="faq-q">Brauche ich ein Immomio-Konto?</div>
+      <div class="faq-a">Ja. Immomio ist die Plattform über die SAGA alle Bewerbungen annimmt. Die Registrierung ist kostenlos auf tenant.immomio.com. Profil zu 100% ausfüllen und Dokumente hochladen.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">Wie sicher sind meine Daten?</div>
+      <div class="faq-a">Dein Passwort wird verschlüsselt gespeichert (AES-256). Wir haben keinen Zugriff auf dein Immomio-Konto außer für automatische Bewerbungen.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">Was passiert nach dem Testzeitraum?</div>
+      <div class="faq-a">Du bekommst eine Benachrichtigung 3 Tage vor Ablauf. Du kannst mit Telegram Stars oder TON verlängern — direkt im Bot.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">Funktioniert der Bot 24/7?</div>
+      <div class="faq-a">Ja. Der Bot läuft auf einem Server und scannt alle 15 Sekunden — auch wenn du schläfst oder nicht am Handy bist.</div>
+    </div>
+  </div>
+</div>
+
+<div class="cta-section">
+  <div class="section-label">Jetzt starten</div>
+  <h2 class="section-title">10 Tage<br><em>kostenlos testen.</em></h2>
+  <p class="hero-sub">Keine Kreditkarte. Keine App. Nur Telegram.</p>
+  <a href="https://t.me/Poschuck_bot" class="hero-cta">
+    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.562 8.248l-2.04 9.613c-.152.68-.555.846-1.125.527l-3.107-2.29-1.498 1.441c-.166.166-.305.305-.625.305l.223-3.164 5.754-5.194c.25-.223-.055-.346-.387-.123L7.37 14.69l-3.04-.95c-.66-.207-.673-.66.138-.977l11.875-4.578c.55-.198 1.031.133.22.063z"/></svg>
+    @Poschuck_bot starten
+  </a>
+</div>
+
+<footer>© 2026 SAGA Apartment Bot · <a href="https://t.me/Poschuck_bot" style="color:var(--gold);text-decoration:none">@Poschuck_bot</a></footer>
+
+</div><!-- /lang-de -->
+
+<!-- ═══════════ УКРАЇНСЬКА ═══════════ -->
+<div id="lang-uk" class="lang-section">
+
+<section class="hero">
+  <div class="hero-label">SAGA Hamburg · Автоматичні заявки</div>
+  <h1 class="hero-title">Більше не<br><em>пропусти квартиру.</em></h1>
+  <p class="hero-sub">Бот знаходить нові квартири SAGA, подає заявки і приймає запрошення на огляд — автоматично, 24/7.</p>
+  <a href="https://t.me/Poschuck_bot" class="hero-cta">
+    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.562 8.248l-2.04 9.613c-.152.68-.555.846-1.125.527l-3.107-2.29-1.498 1.441c-.166.166-.305.305-.625.305l.223-3.164 5.754-5.194c.25-.223-.055-.346-.387-.123L7.37 14.69l-3.04-.95c-.66-.207-.673-.66.138-.977l11.875-4.578c.55-.198 1.031.133.22.063z"/></svg>
+    Спробувати безкоштовно
+  </a>
+  <div class="scroll-hint"><div class="scroll-line"></div>Детальніше</div>
+</section>
+
+<div class="section">
+  <div class="section-label">Як це працює</div>
+  <h2 class="section-title">3 кроки до<br>нової квартири</h2>
+  <div class="steps">
+    <div class="step">
+      <div class="step-num">01</div>
+      <h3>Реєстрація</h3>
+      <p>Підключи акаунт Immomio, встанови фільтри — все в Telegram, без завантажень.</p>
+    </div>
+    <div class="step">
+      <div class="step-num">02</div>
+      <h3>Бот працює</h3>
+      <p>Кожні 15 секунд сканує saga.hamburg і миттєво подає заявку на нові квартири.</p>
+    </div>
+    <div class="step">
+      <div class="step-num">03</div>
+      <h3>Заїзд</h3>
+      <p>Отримай повідомлення про запрошення на огляд і просто прийди.</p>
+    </div>
+  </div>
+</div>
+
+<div class="features-wrap">
+  <div class="features">
+    <div>
+      <div class="section-label">Можливості</div>
+      <h2 class="section-title">Все що<br>потрібно</h2>
+    </div>
+    <ul class="feature-list">
+      <li>
+        <div class="feat-icon">⚡</div>
+        <div class="feat-text"><h4>Скан кожні 15 секунд</h4><p>Нові квартири знаходяться і обробляються раніше ніж інші встигають відкрити сайт.</p></div>
+      </li>
+      <li>
+        <div class="feat-icon">🔍</div>
+        <div class="feat-text"><h4>Розумні фільтри</h4><p>Кімнати, ціна, район — тільки потрібні квартири.</p></div>
+      </li>
+      <li>
+        <div class="feat-icon">📬</div>
+        <div class="feat-text"><h4>Статус заявок</h4><p>Повідомлення коли заявку переглянули або запросили на огляд.</p></div>
+      </li>
+      <li>
+        <div class="feat-icon">👥</div>
+        <div class="feat-text"><h4>Реферальна програма</h4><p>За кожного запрошеного друга — обидва отримують +3 дні безкоштовно.</p></div>
+      </li>
+    </ul>
+  </div>
+</div>
+
+<div class="section">
+  <div class="section-label">Тарифи</div>
+  <h2 class="section-title">Просто.<br>Прозоро.</h2>
+  <div class="pricing">
+    <div class="plan">
+      <div class="plan-name">Стартер</div>
+      <div class="plan-price">€19</div>
+      <div class="plan-period">на місяць</div>
+      <ul class="plan-features">
+        <li>Скан кожні 15 секунд</li>
+        <li>Автоматичні заявки</li>
+        <li>Фільтри і сповіщення</li>
+      </ul>
+    </div>
+    <div class="plan featured">
+      <div class="plan-badge">Популярний</div>
+      <div class="plan-name">Стандарт</div>
+      <div class="plan-price">€29</div>
+      <div class="plan-period">2 місяці · знижка 24%</div>
+      <ul class="plan-features">
+        <li>Все зі Стартера</li>
+        <li>Відстеження статусу</li>
+        <li>Пріоритетна підтримка</li>
+      </ul>
+    </div>
+    <div class="plan">
+      <div class="plan-name">Преміум</div>
+      <div class="plan-price">€39</div>
+      <div class="plan-period">4 місяці · +1 місяць у подарунок</div>
+      <ul class="plan-features">
+        <li>Все зі Стандарту</li>
+        <li>1 бонусний місяць</li>
+        <li>Ранній доступ до функцій</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <div class="section-label">FAQ</div>
+  <h2 class="section-title">Часті<br>питання</h2>
+  <div class="faq-list">
+    <div class="faq-item">
+      <div class="faq-q">Чи потрібен акаунт Immomio?</div>
+      <div class="faq-a">Так. Immomio — платформа через яку SAGA приймає всі заявки. Реєстрація безкоштовна на tenant.immomio.com. Заповни профіль на 100% і завантаж документи.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">Чи безпечні мої дані?</div>
+      <div class="faq-a">Пароль зберігається в зашифрованому вигляді (AES-256). Ми не маємо доступу до твого акаунту Immomio окрім як для автоматичних заявок.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">Що після тріалу?</div>
+      <div class="faq-a">За 3 дні до кінця прийде нагадування. Продовжити можна через Telegram Stars або TON прямо в боті.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">Бот працює цілодобово?</div>
+      <div class="faq-a">Так. Бот запущений на сервері і сканує кожні 15 секунд — навіть поки ти спиш.</div>
+    </div>
+  </div>
+</div>
+
+<div class="cta-section">
+  <div class="section-label">Почати</div>
+  <h2 class="section-title">10 днів<br><em>безкоштовно.</em></h2>
+  <p class="hero-sub">Без карток. Без застосунків. Тільки Telegram.</p>
+  <a href="https://t.me/Poschuck_bot" class="hero-cta">
+    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.562 8.248l-2.04 9.613c-.152.68-.555.846-1.125.527l-3.107-2.29-1.498 1.441c-.166.166-.305.305-.625.305l.223-3.164 5.754-5.194c.25-.223-.055-.346-.387-.123L7.37 14.69l-3.04-.95c-.66-.207-.673-.66.138-.977l11.875-4.578c.55-.198 1.031.133.22.063z"/></svg>
+    Запустити @Poschuck_bot
+  </a>
+</div>
+
+<footer>© 2026 SAGA Apartment Bot · <a href="https://t.me/Poschuck_bot" style="color:var(--gold);text-decoration:none">@Poschuck_bot</a></footer>
+</div><!-- /lang-uk -->
+
+<!-- ═══════════ ENGLISH ═══════════ -->
+<div id="lang-en" class="lang-section">
+
+<section class="hero">
+  <div class="hero-label">SAGA Hamburg · Automatic Applications</div>
+  <h1 class="hero-title">Never miss<br><em>an apartment.</em></h1>
+  <p class="hero-sub">The bot finds new SAGA apartments, applies instantly and accepts viewing invitations — automatically, 24/7.</p>
+  <a href="https://t.me/Poschuck_bot" class="hero-cta">
+    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.562 8.248l-2.04 9.613c-.152.68-.555.846-1.125.527l-3.107-2.29-1.498 1.441c-.166.166-.305.305-.625.305l.223-3.164 5.754-5.194c.25-.223-.055-.346-.387-.123L7.37 14.69l-3.04-.95c-.66-.207-.673-.66.138-.977l11.875-4.578c.55-.198 1.031.133.22.063z"/></svg>
+    Start for free
+  </a>
+  <div class="scroll-hint"><div class="scroll-line"></div>Learn more</div>
+</section>
+
+<div class="section">
+  <div class="section-label">How it works</div>
+  <h2 class="section-title">3 steps to<br>your new home</h2>
+  <div class="steps">
+    <div class="step">
+      <div class="step-num">01</div>
+      <h3>Register</h3>
+      <p>Connect your Immomio account, set filters — all in Telegram, no downloads needed.</p>
+    </div>
+    <div class="step">
+      <div class="step-num">02</div>
+      <h3>Bot runs</h3>
+      <p>Every 15 seconds the bot scans saga.hamburg and applies to new listings immediately.</p>
+    </div>
+    <div class="step">
+      <div class="step-num">03</div>
+      <h3>Move in</h3>
+      <p>Get notified when a viewing is confirmed. Just show up.</p>
+    </div>
+  </div>
+</div>
+
+<div class="features-wrap">
+  <div class="features">
+    <div>
+      <div class="section-label">Features</div>
+      <h2 class="section-title">Everything<br>you need</h2>
+    </div>
+    <ul class="feature-list">
+      <li>
+        <div class="feat-icon">⚡</div>
+        <div class="feat-text"><h4>15-second scan</h4><p>New listings found and applied before others even open the website.</p></div>
+      </li>
+      <li>
+        <div class="feat-icon">🔍</div>
+        <div class="feat-text"><h4>Smart filters</h4><p>Rooms, rent, district — only relevant apartments.</p></div>
+      </li>
+      <li>
+        <div class="feat-icon">📬</div>
+        <div class="feat-text"><h4>Application status</h4><p>Get notified when your application is viewed or a viewing invite is sent.</p></div>
+      </li>
+      <li>
+        <div class="feat-icon">👥</div>
+        <div class="feat-text"><h4>Referral program</h4><p>Invite friends and both of you get +3 days free.</p></div>
+      </li>
+    </ul>
+  </div>
+</div>
+
+<div class="section">
+  <div class="section-label">Pricing</div>
+  <h2 class="section-title">Simple.<br>Transparent.</h2>
+  <div class="pricing">
+    <div class="plan">
+      <div class="plan-name">Starter</div>
+      <div class="plan-price">€19</div>
+      <div class="plan-period">per month</div>
+      <ul class="plan-features">
+        <li>15-second scanning</li>
+        <li>Automatic applications</li>
+        <li>Filters & notifications</li>
+      </ul>
+    </div>
+    <div class="plan featured">
+      <div class="plan-badge">Popular</div>
+      <div class="plan-name">Standard</div>
+      <div class="plan-price">€29</div>
+      <div class="plan-period">2 months · 24% off</div>
+      <ul class="plan-features">
+        <li>Everything in Starter</li>
+        <li>Status tracking</li>
+        <li>Priority support</li>
+      </ul>
+    </div>
+    <div class="plan">
+      <div class="plan-name">Premium</div>
+      <div class="plan-price">€39</div>
+      <div class="plan-period">4 months · +1 month free</div>
+      <ul class="plan-features">
+        <li>Everything in Standard</li>
+        <li>1 bonus month</li>
+        <li>Early access to features</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <div class="section-label">FAQ</div>
+  <h2 class="section-title">Common<br>questions</h2>
+  <div class="faq-list">
+    <div class="faq-item">
+      <div class="faq-q">Do I need an Immomio account?</div>
+      <div class="faq-a">Yes. Immomio is the platform SAGA uses for all applications. Registration is free at tenant.immomio.com. Fill your profile 100% and upload documents.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">Is my data safe?</div>
+      <div class="faq-a">Your password is stored encrypted (AES-256). We only access your Immomio account to submit automatic applications.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">What happens after the trial?</div>
+      <div class="faq-a">You get a reminder 3 days before it ends. Renew with Telegram Stars or TON directly in the bot.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">Does the bot run 24/7?</div>
+      <div class="faq-a">Yes. The bot runs on a server and scans every 15 seconds — even while you sleep.</div>
+    </div>
+  </div>
+</div>
+
+<div class="cta-section">
+  <div class="section-label">Get started</div>
+  <h2 class="section-title">10 days<br><em>completely free.</em></h2>
+  <p class="hero-sub">No credit card. No app. Just Telegram.</p>
+  <a href="https://t.me/Poschuck_bot" class="hero-cta">
+    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.562 8.248l-2.04 9.613c-.152.68-.555.846-1.125.527l-3.107-2.29-1.498 1.441c-.166.166-.305.305-.625.305l.223-3.164 5.754-5.194c.25-.223-.055-.346-.387-.123L7.37 14.69l-3.04-.95c-.66-.207-.673-.66.138-.977l11.875-4.578c.55-.198 1.031.133.22.063z"/></svg>
+    Start @Poschuck_bot
+  </a>
+</div>
+
+<footer>© 2026 SAGA Apartment Bot · <a href="https://t.me/Poschuck_bot" style="color:var(--gold);text-decoration:none">@Poschuck_bot</a></footer>
+</div><!-- /lang-en -->
+
+<script>
+function setLang(lang) {
+  document.querySelectorAll('.lang-section').forEach(el => el.classList.remove('active'));
+  document.querySelectorAll('.lang-btn').forEach(el => el.classList.remove('active'));
+  document.getElementById('lang-' + lang).classList.add('active');
+  event.target.classList.add('active');
+  document.documentElement.lang = lang;
+  localStorage.setItem('lang', lang);
+  window.scrollTo(0, 0);
+}
+
+// Auto-detect language
+(function() {
+  const saved = localStorage.getItem('lang');
+  const nav = navigator.language?.slice(0,2).toLowerCase();
+  const lang = saved || (['de','uk','en'].includes(nav) ? nav : 'de');
+  if (lang !== 'de') {
+    document.getElementById('lang-de').classList.remove('active');
+    document.getElementById('lang-' + lang).classList.add('active');
+    document.querySelector('[onclick="setLang(\'de\')"]').classList.remove('active');
+    const btn = document.querySelector('[onclick="setLang(\'' + lang + '\')"]');
+    if (btn) btn.classList.add('active');
+  }
+})();
+
+// FAQ toggle
+document.querySelectorAll('.faq-item').forEach(item => {
+  item.addEventListener('click', () => {
+    item.classList.toggle('open');
+  });
+});
+
+// Scroll reveal
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.style.opacity = '1';
+      e.target.style.transform = 'translateY(0)';
+    }
+  });
+}, { threshold: 0.15 });
+
+document.querySelectorAll('.step, .plan, .faq-item').forEach(el => {
+  el.style.opacity = '0';
+  el.style.transform = 'translateY(20px)';
+  el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+  observer.observe(el);
+});
+</script>
+</body>
+</html>
