@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Wohnungssuche Hamburg Guide — SAGA Bot</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --black: #0d0d0d; --white: #fafaf8; --accent: #2563eb;
+    --muted: #6b7280; --border: #e5e5e0; --surface: #f5f5f0;
+    --green: #16a34a;
+  }
+  html { scroll-behavior: smooth; }
+  body { font-family: 'DM Sans', sans-serif; background: var(--white); color: var(--black); font-size: 16px; line-height: 1.6; }
+  nav { position: sticky; top: 0; z-index: 100; border-bottom: 1px solid var(--border); background: rgba(250,250,248,0.92); backdrop-filter: blur(12px); padding: 0 2rem; display: flex; align-items: center; justify-content: space-between; height: 56px; }
+  .nav-logo { font-family: 'DM Serif Display', serif; font-size: 18px; color: var(--black); text-decoration: none; }
+  .nav-links { display: flex; gap: 2rem; list-style: none; }
+  .nav-links a { font-size: 14px; color: var(--muted); text-decoration: none; transition: color .2s; }
+  .nav-links a:hover { color: var(--black); }
+  .nav-cta { background: var(--black); color: var(--white); padding: 8px 18px; border-radius: 100px; font-size: 14px; font-weight: 500; text-decoration: none; transition: opacity .2s; }
+  .nav-cta:hover { opacity: 0.8; }
+  .lang-bar { display: flex; gap: 8px; align-items: center; margin-right: 1.5rem; }
+  .lang-bar a { font-size: 13px; color: var(--muted); text-decoration: none; padding: 4px 8px; border-radius: 6px; transition: all .2s; }
+  .lang-bar a.active, .lang-bar a:hover { color: var(--black); background: var(--surface); }
+  .hero { padding: 80px 2rem 60px; max-width: 720px; margin: 0 auto; text-align: center; }
+  .hero-tag { display: inline-flex; align-items: center; gap: 6px; background: var(--surface); border: 1px solid var(--border); border-radius: 100px; padding: 5px 14px; font-size: 13px; color: var(--muted); margin-bottom: 28px; }
+  .hero-tag span { width: 6px; height: 6px; border-radius: 50%; background: var(--green); display: inline-block; animation: pulse 2s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
+  h1 { font-family: 'DM Serif Display', serif; font-size: clamp(36px, 6vw, 56px); line-height: 1.1; letter-spacing: -0.02em; margin-bottom: 20px; }
+  h1 em { font-style: italic; }
+  .hero p { font-size: 18px; color: var(--muted); max-width: 520px; margin: 0 auto 36px; line-height: 1.65; font-weight: 300; }
+  .hero-actions { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+  .btn-primary { background: var(--black); color: var(--white); padding: 12px 24px; border-radius: 100px; font-size: 15px; font-weight: 500; text-decoration: none; transition: opacity .2s; display: inline-flex; align-items: center; gap: 8px; }
+  .btn-primary:hover { opacity: 0.8; }
+  .btn-secondary { background: transparent; color: var(--black); border: 1px solid var(--border); padding: 12px 24px; border-radius: 100px; font-size: 15px; text-decoration: none; transition: background .2s; }
+  .btn-secondary:hover { background: var(--surface); }
+  section { padding: 72px 2rem; border-top: 1px solid var(--border); }
+  .container { max-width: 780px; margin: 0 auto; }
+  .section-label { font-size: 12px; font-weight: 500; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); margin-bottom: 12px; }
+  h2 { font-family: 'DM Serif Display', serif; font-size: clamp(28px, 4vw, 40px); line-height: 1.15; letter-spacing: -0.02em; margin-bottom: 48px; }
+  h2 em { font-style: italic; }
+  .steps { display: flex; flex-direction: column; }
+  .step { display: grid; grid-template-columns: 64px 1fr; gap: 0 28px; padding: 32px 0; border-bottom: 1px solid var(--border); }
+  .step:last-child { border-bottom: none; }
+  .step-num { font-family: 'DM Serif Display', serif; font-size: 13px; color: var(--muted); padding-top: 4px; }
+  .step-content h3 { font-size: 20px; font-weight: 500; margin-bottom: 10px; }
+  .step-content p { color: var(--muted); font-size: 15px; font-weight: 300; line-height: 1.65; }
+  .step-badge { display: inline-flex; align-items: center; gap: 6px; background: var(--surface); border: 1px solid var(--border); border-radius: 6px; padding: 4px 10px; font-size: 12px; color: var(--muted); margin-top: 10px; }
+  .docs-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px,1fr)); gap: 16px; }
+  .doc-card { background: var(--white); border: 1px solid var(--border); border-radius: 12px; padding: 20px; transition: border-color .2s, transform .2s; }
+  .doc-card:hover { border-color: var(--black); transform: translateY(-2px); }
+  .doc-icon { font-size: 22px; margin-bottom: 12px; }
+  .doc-card h4 { font-size: 15px; font-weight: 500; margin-bottom: 6px; }
+  .doc-card p { font-size: 13px; color: var(--muted); line-height: 1.5; font-weight: 300; }
+  .doc-tag { display: inline-block; margin-top: 10px; padding: 3px 8px; border-radius: 4px; font-size: 11px; font-weight: 500; }
+  .tag-must { background: #fef3c7; color: #92400e; }
+  .tag-optional { background: #f0fdf4; color: #166534; }
+  .tag-helpful { background: #eff6ff; color: #1e40af; }
+  .tips { display: flex; flex-direction: column; gap: 16px; }
+  .tip { display: flex; gap: 16px; align-items: flex-start; padding: 20px; border: 1px solid var(--border); border-radius: 12px; transition: border-color .2s; }
+  .tip:hover { border-color: #999; }
+  .tip-icon { font-size: 20px; flex-shrink: 0; margin-top: 2px; }
+  .tip h4 { font-size: 15px; font-weight: 500; margin-bottom: 4px; }
+  .tip p { font-size: 14px; color: var(--muted); line-height: 1.55; font-weight: 300; }
+  .links-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px,1fr)); gap: 12px; }
+  .link-row { display: flex; align-items: center; justify-content: space-between; padding: 16px 20px; border: 1px solid var(--border); border-radius: 10px; text-decoration: none; color: var(--black); transition: background .2s, border-color .2s; gap: 12px; }
+  .link-row:hover { background: var(--surface); border-color: #999; }
+  .link-info { display: flex; flex-direction: column; gap: 2px; }
+  .link-title { font-size: 14px; font-weight: 500; }
+  .link-desc { font-size: 12px; color: var(--muted); }
+  .link-arrow { color: var(--muted); font-size: 16px; }
+  .faq { display: flex; flex-direction: column; }
+  details { border-bottom: 1px solid var(--border); }
+  details:first-child { border-top: 1px solid var(--border); }
+  summary { padding: 20px 0; cursor: pointer; font-size: 16px; font-weight: 500; display: flex; justify-content: space-between; align-items: center; list-style: none; user-select: none; }
+  summary::-webkit-details-marker { display: none; }
+  summary::after { content: '+'; font-size: 20px; font-weight: 300; color: var(--muted); transition: transform .2s; }
+  details[open] summary::after { transform: rotate(45deg); }
+  details .faq-body { padding: 0 0 20px; font-size: 15px; color: var(--muted); line-height: 1.65; font-weight: 300; }
+  .cta-block { background: var(--black); color: var(--white); border-radius: 20px; padding: 56px 40px; text-align: center; margin: 0 auto; max-width: 600px; }
+  .cta-block h2 { font-family: 'DM Serif Display', serif; margin-bottom: 16px; color: var(--white); }
+  .cta-block p { color: rgba(255,255,255,.6); margin-bottom: 32px; font-weight: 300; }
+  .btn-white { background: var(--white); color: var(--black); padding: 14px 28px; border-radius: 100px; font-size: 15px; font-weight: 500; text-decoration: none; transition: opacity .2s; display: inline-flex; align-items: center; gap: 8px; }
+  .btn-white:hover { opacity: 0.9; }
+  footer { border-top: 1px solid var(--border); padding: 32px 2rem; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px; font-size: 13px; color: var(--muted); }
+  footer a { color: var(--muted); text-decoration: none; }
+  footer a:hover { color: var(--black); }
+  @media (max-width: 600px) { nav { padding: 0 1rem; } .nav-links { display: none; } .hero { padding: 56px 1.25rem 48px; } section { padding: 56px 1.25rem; } .cta-block { padding: 40px 24px; } footer { flex-direction: column; align-items: flex-start; } }
+</style>
+</head>
+<body>
+
+<nav>
+  <a class="nav-logo" href="#">SAGA Bot</a>
+  <div style="display:flex;align-items:center;">
+    <div class="lang-bar">
+      <a href="guide_uk.html">UA</a>
+      <a class="active" href="guide_de.html">DE</a>
+      <a href="guide_en.html">EN</a>
+    </div>
+    <ul class="nav-links">
+      <li><a href="#steps">Schritte</a></li>
+      <li><a href="#docs">Dokumente</a></li>
+      <li><a href="#tips">Tipps</a></li>
+      <li><a href="#links">Links</a></li>
+    </ul>
+  </div>
+  <a class="nav-cta" href="https://t.me/Poschuck_bot">Bot öffnen →</a>
+</nav>
+
+<div class="hero">
+  <div class="hero-tag"><span></span> Live · SAGA Hamburg</div>
+  <h1>Der vollständige Guide<br>zur <em>Wohnungssuche</em><br>in Hamburg</h1>
+  <p>Dokumente, Registrierungsschritte, nützliche Tipps und Links — alles was du wissen musst.</p>
+  <div class="hero-actions">
+    <a class="btn-primary" href="https://t.me/Poschuck_bot">Bot starten</a>
+    <a class="btn-secondary" href="#steps">Guide lesen ↓</a>
+  </div>
+</div>
+
+<section id="steps">
+  <div class="container">
+    <div class="section-label">Prozess</div>
+    <h2>So bekommst du eine<br><em>SAGA-Wohnung</em></h2>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">01</div>
+        <div class="step-content">
+          <h3>Immomio-Konto erstellen</h3>
+          <p>Öffne <strong>tenant.immomio.com</strong> und erstelle ein Konto. Fülle das Profil zu 100% aus — das ist entscheidend. Ein unvollständiges Profil führt zur automatischen Ablehnung.</p>
+          <span class="step-badge">🔗 tenant.immomio.com</span>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">02</div>
+        <div class="step-content">
+          <h3>Dokumente hochladen</h3>
+          <p>Bereite alle Pflichtdokumente vor und lade sie im Profil hoch (Liste unten). Ein vollständiges Profil mit Dokumenten erhöht die Chancen erheblich.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">03</div>
+        <div class="step-content">
+          <h3>Bot verbinden & Filter setzen</h3>
+          <p>Öffne @Poschuck_bot in Telegram, gib E-Mail und Passwort von Immomio ein. Stelle Filter ein — Zimmeranzahl und maximaler Mietpreis.</p>
+          <span class="step-badge">🤖 @Poschuck_bot</span>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">04</div>
+        <div class="step-content">
+          <h3>Bot bewirbt sich automatisch</h3>
+          <p>Sobald auf saga.hamburg eine neue Wohnung erscheint, bewirbt sich der Bot sofort in deinem Namen. Du erhältst eine Nachricht bei jeder Bewerbung und Statusänderung.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">05</div>
+        <div class="step-content">
+          <h3>Besichtigungseinladung erhalten</h3>
+          <p>Wenn SAGA deine Bewerbung interessiert, kommt eine Einladung zur Besichtigung. Der Bot nimmt diese ebenfalls automatisch an.</p>
+          <span class="step-badge">🎉 Besichtigung = Wohnungsbesichtigung</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="docs">
+  <div class="container">
+    <div class="section-label">Dokumente</div>
+    <h2>Was du<br><em>vorbereiten</em> musst</h2>
+    <div class="docs-grid">
+      <div class="doc-card">
+        <div class="doc-icon">📋</div>
+        <h4>SCHUFA-Auskunft</h4>
+        <p>Kreditauskunft in Deutschland. Ohne sie wird deine Bewerbung kaum bearbeitet.</p>
+        <span class="doc-tag tag-must">Pflicht</span>
+      </div>
+      <div class="doc-card">
+        <div class="doc-icon">💼</div>
+        <h4>Einkommensnachweis</h4>
+        <p>Gehaltsabrechnungen der letzten 3 Monate oder Arbeitsvertrag.</p>
+        <span class="doc-tag tag-must">Pflicht</span>
+      </div>
+      <div class="doc-card">
+        <div class="doc-icon">🪪</div>
+        <h4>Personalausweis / Reisepass</h4>
+        <p>Gültiger Ausweis oder Reisepass.</p>
+        <span class="doc-tag tag-must">Pflicht</span>
+      </div>
+      <div class="doc-card">
+        <div class="doc-icon">🏠</div>
+        <h4>Mietschuldenfreiheitsbescheinigung</h4>
+        <p>Bestätigung des Vorvermieters, dass keine Mietschulden bestehen.</p>
+        <span class="doc-tag tag-helpful">Sehr hilfreich</span>
+      </div>
+      <div class="doc-card">
+        <div class="doc-icon">📄</div>
+        <h4>Selbstauskunft</h4>
+        <p>Fragebogen über dich als Mieter. Wird normalerweise automatisch in Immomio ausgefüllt.</p>
+        <span class="doc-tag tag-optional">Automatisch</span>
+      </div>
+      <div class="doc-card">
+        <div class="doc-icon">📊</div>
+        <h4>WBS (Wohnberechtigungsschein)</h4>
+        <p>Berechtigungsschein für Sozialwohnungen. Für manche SAGA-Wohnungen mit vergünstigten Mieten nötig.</p>
+        <span class="doc-tag tag-optional">Falls vorhanden</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="tips">
+  <div class="container">
+    <div class="section-label">Tipps</div>
+    <h2>Was deine<br><em>Chancen erhöht</em></h2>
+    <div class="tips">
+      <div class="tip">
+        <div class="tip-icon">⚡</div>
+        <div>
+          <h4>Geschwindigkeit entscheidet</h4>
+          <p>SAGA erhält innerhalb von Stunden hunderte Bewerbungen. Der Bot bewirbt sich innerhalb von Sekunden nach Erscheinen der Anzeige automatisch — das ist der entscheidende Vorteil.</p>
+        </div>
+      </div>
+      <div class="tip">
+        <div class="tip-icon">✅</div>
+        <div>
+          <h4>Immomio-Profil zu 100%</h4>
+          <p>Fülle alle Felder aus: persönliche Daten, Einkommensangaben, Haustiere, Rauchen. Ein unvollständiges Profil führt zur automatischen Ablehnung, bevor ein Mensch überhaupt schaut.</p>
+        </div>
+      </div>
+      <div class="tip">
+        <div class="tip-icon">📋</div>
+        <div>
+          <h4>SCHUFA rechtzeitig beantragen</h4>
+          <p>Hol deine SCHUFA auf meineschufa.de (kostenlos einmal pro Jahr nach §34 BDSG). Lade sie sofort in dein Immomio-Profil hoch. Eine frische SCHUFA ohne negative Einträge erhöht die Chancen deutlich.</p>
+        </div>
+      </div>
+      <div class="tip">
+        <div class="tip-icon">🎯</div>
+        <div>
+          <h4>Realistische Filter setzen</h4>
+          <p>Setze keine zu engen Filter. Ein etwas breiterer Preis- und Zimmerbereich bedeutet mehr Wohnungen und damit mehr Chancen. Einzelne Wohnungen kannst du immer mit "Nicht interessiert" überspringen.</p>
+        </div>
+      </div>
+      <div class="tip">
+        <div class="tip-icon">📞</div>
+        <div>
+          <h4>Bereit für die Besichtigung sein</h4>
+          <p>Wenn eine Besichtigungseinladung kommt — bestätige sofort. Der Bot macht das automatisch. Komm zur Besichtigung vorbereitet: mit Dokumenten und bereit, sofort zu unterschreiben.</p>
+        </div>
+      </div>
+      <div class="tip">
+        <div class="tip-icon">👥</div>
+        <div>
+          <h4>Empfehlungsprogramm nutzen</h4>
+          <p>Lade einen Freund über deinen Link im Bot ein — beide erhaltet +3 Tage kostenlos. Link: Schaltfläche "Empfehlungen" im Hauptmenü des Bots.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="links">
+  <div class="container">
+    <div class="section-label">Nützliche Links</div>
+    <h2>Alles was du<br><em>aufrufen musst</em></h2>
+    <div class="links-grid">
+      <a class="link-row" href="https://saga.hamburg/immobiliensuche?Kategorie=APARTMENT" target="_blank">
+        <div class="link-info">
+          <span class="link-title">saga.hamburg</span>
+          <span class="link-desc">Offizielle Website — alle SAGA-Wohnungen</span>
+        </div>
+        <span class="link-arrow">↗</span>
+      </a>
+      <a class="link-row" href="https://tenant.immomio.com" target="_blank">
+        <div class="link-info">
+          <span class="link-title">tenant.immomio.com</span>
+          <span class="link-desc">Registrierung und Profil für Bewerbungen</span>
+        </div>
+        <span class="link-arrow">↗</span>
+      </a>
+      <a class="link-row" href="https://www.meineschufa.de" target="_blank">
+        <div class="link-info">
+          <span class="link-title">meineschufa.de</span>
+          <span class="link-desc">SCHUFA online (kostenlos einmal pro Jahr)</span>
+        </div>
+        <span class="link-arrow">↗</span>
+      </a>
+      <a class="link-row" href="https://www.hamburg.de/wbs" target="_blank">
+        <div class="link-info">
+          <span class="link-title">hamburg.de/wbs</span>
+          <span class="link-desc">WBS beantragen (Sozialwohnung)</span>
+        </div>
+        <span class="link-arrow">↗</span>
+      </a>
+      <a class="link-row" href="https://www.mieterverein-hamburg.de" target="_blank">
+        <div class="link-info">
+          <span class="link-title">mieterverein-hamburg.de</span>
+          <span class="link-desc">Mieterrechte und kostenlose Beratung</span>
+        </div>
+        <span class="link-arrow">↗</span>
+      </a>
+      <a class="link-row" href="https://t.me/Poschuck_bot" target="_blank">
+        <div class="link-info">
+          <span class="link-title">@Poschuck_bot</span>
+          <span class="link-desc">Telegram Bot — automatische SAGA-Bewerbungen</span>
+        </div>
+        <span class="link-arrow">↗</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="container">
+    <div class="section-label">Häufige Fragen</div>
+    <h2><em>FAQ</em></h2>
+    <div class="faq">
+      <details>
+        <summary>Brauche ich ein Immomio-Konto?</summary>
+        <div class="faq-body">Ja, unbedingt. Immomio ist die Plattform, über die SAGA Hamburg alle Wohnungsbewerbungen annimmt. Die Registrierung ist kostenlos auf tenant.immomio.com. Wichtig ist, das Profil zu 100% auszufüllen und alle Dokumente hochzuladen — dann kann der Bot Bewerbungen in deinem Namen senden.</div>
+      </details>
+      <details>
+        <summary>Wo bekomme ich die SCHUFA kostenlos?</summary>
+        <div class="faq-body">Auf meineschufa.de gibt es die kostenlose "Datenkopie nach Art. 15 DSGVO" — einmal pro Jahr. Bestelle sie rechtzeitig, sie kommt per Post in 1–2 Wochen. Du kannst auch einen sofortigen kostenpflichtigen Online-Bericht bestellen, wenn es dringend ist.</div>
+      </details>
+      <details>
+        <summary>Was ist WBS und brauche ich ihn?</summary>
+        <div class="faq-body">Der WBS (Wohnberechtigungsschein) ist ein Berechtigungsschein für Sozialwohnungen. Manche SAGA-Wohnungen sind nur mit WBS erhältlich und günstiger. Wenn dein Einkommen unter einer bestimmten Grenze liegt, stelle einen Antrag auf hamburg.de/wbs. Ohne WBS kann man ebenfalls suchen — die meisten SAGA-Wohnungen sind ohne Einschränkungen.</div>
+      </details>
+      <details>
+        <summary>Ist es sicher, mein Passwort einzugeben?</summary>
+        <div class="faq-body">Das Passwort wird verschlüsselt gespeichert (Fernet AES-128). Niemand hat Zugriff auf dein Konto außer für automatische Bot-Aktionen: Bewerbungen einreichen und Besichtigungseinladungen annehmen.</div>
+      </details>
+      <details>
+        <summary>Wie schnell kommen Einladungen von SAGA?</summary>
+        <div class="faq-body">Das variiert — von wenigen Tagen bis zu mehreren Monaten. Es hängt vom Wettbewerb für die jeweilige Wohnung ab. Das Wichtigste ist, unter den Ersten zu sein, die sich beworben haben. Der Bot sorgt automatisch für diese Geschwindigkeit.</div>
+      </details>
+    </div>
+  </div>
+</section>
+
+<section style="border-top: 1px solid var(--border); padding: 72px 2rem;">
+  <div class="cta-block">
+    <h2>10 Tage <em>kostenlos testen</em></h2>
+    <p>Keine Kreditkarte. Keine App. Nur Telegram.</p>
+    <a class="btn-white" href="https://t.me/Poschuck_bot">@Poschuck_bot öffnen →</a>
+  </div>
+</section>
+
+<footer>
+  <span>SAGA Apartment Bot</span>
+  <div style="display:flex;gap:20px;flex-wrap:wrap;">
+    <a href="https://t.me/Poschuck_bot">@Poschuck_bot</a>
+    <a href="https://t.me/sagaAdminn">Support</a>
+    <a href="https://patrickkassparov.github.io/saga_bot/">Website</a>
+  </div>
+  <div class="lang-bar">
+    <a href="guide_uk.html">UA</a>
+    <a class="active" href="guide_de.html">DE</a>
+    <a href="guide_en.html">EN</a>
+  </div>
+</footer>
+</body>
+</html>
