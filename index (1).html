@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SAGA Apartment Bot</title>
+<meta name="description" content="Automatische Wohnungsbewerbungen für SAGA Hamburg. Kein Verpassen mehr.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#080808;--bg2:#0d0d0d;--bg3:#111111;
+  --gold:#c9a84c;--gold-dim:rgba(201,168,76,0.12);--gold-border:rgba(201,168,76,0.25);
+  --white:#f0ede6;--gray:#666;--gray2:#999;
+  --border:rgba(255,255,255,0.06);
+}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--white);font-family:'Inter',sans-serif;font-weight:300;overflow-x:hidden}
+
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;justify-content:space-between;align-items:center;padding:1.1rem 2.5rem;background:rgba(8,8,8,0.9);backdrop-filter:blur(24px);border-bottom:0.5px solid var(--border)}
+.nav-logo{font-family:'Syne',sans-serif;font-weight:800;font-size:1rem;color:var(--white);text-decoration:none;display:flex;align-items:center;gap:8px}
+.live-dot{width:7px;height:7px;border-radius:50%;background:var(--gold);animation:livepulse 2s ease-in-out infinite}
+@keyframes livepulse{0%,100%{opacity:0.4;transform:scale(1)}50%{opacity:1;transform:scale(1.2)}}
+.nav-right{display:flex;align-items:center;gap:10px}
+.lang-btn{background:none;border:0.5px solid var(--border);color:var(--gray2);font-family:'Inter',sans-serif;font-size:0.7rem;letter-spacing:0.08em;padding:0.3rem 0.65rem;border-radius:20px;cursor:pointer;transition:all 0.2s}
+.lang-btn.active,.lang-btn:hover{border-color:var(--gold-border);color:var(--gold)}
+.nav-cta{background:var(--gold);color:#000;font-family:'Inter',sans-serif;font-size:0.75rem;font-weight:500;padding:0.45rem 1.1rem;border-radius:7px;text-decoration:none;transition:all 0.2s;display:flex;align-items:center;gap:5px}
+.nav-cta:hover{background:#dbb85a;transform:translateY(-1px)}
+.tg-icon{width:13px;height:13px}
+
+/* HERO */
+.hero{min-height:100vh;display:flex;flex-direction:column;justify-content:center;padding:8rem 2.5rem 5rem;max-width:1100px;margin:0 auto;position:relative}
+.hero-badge{display:inline-flex;align-items:center;gap:7px;background:var(--gold-dim);border:0.5px solid var(--gold-border);color:var(--gold);font-size:0.72rem;letter-spacing:0.1em;padding:0.38rem 0.9rem;border-radius:20px;margin-bottom:2.2rem;font-family:'Inter',sans-serif;opacity:0;animation:fadeup 0.7s 0.1s forwards}
+.hero-h1{font-family:'Syne',sans-serif;font-size:clamp(3.2rem,7vw,6.5rem);font-weight:800;line-height:1.02;letter-spacing:-0.03em;margin-bottom:1.8rem;opacity:0;animation:fadeup 0.7s 0.25s forwards}
+.hero-h1 em{font-style:italic;color:var(--gold)}
+.hero-sub{font-size:clamp(1rem,1.8vw,1.15rem);color:var(--gray2);line-height:1.75;max-width:520px;margin-bottom:3rem;opacity:0;animation:fadeup 0.7s 0.4s forwards}
+.hero-actions{display:flex;align-items:center;gap:1rem;flex-wrap:wrap;opacity:0;animation:fadeup 0.7s 0.55s forwards}
+.btn-primary{display:inline-flex;align-items:center;gap:8px;background:var(--gold);color:#000;font-family:'Inter',sans-serif;font-size:0.9rem;font-weight:500;padding:0.85rem 2rem;border-radius:10px;text-decoration:none;transition:all 0.25s}
+.btn-primary:hover{background:#dbb85a;transform:translateY(-2px);box-shadow:0 16px 40px rgba(201,168,76,0.2)}
+.btn-secondary{display:inline-flex;align-items:center;gap:8px;background:transparent;color:var(--gray2);font-family:'Inter',sans-serif;font-size:0.9rem;font-weight:400;padding:0.85rem 1.5rem;border-radius:10px;border:0.5px solid var(--border);text-decoration:none;transition:all 0.2s}
+.btn-secondary:hover{border-color:var(--gold-border);color:var(--white)}
+.hero-stats{display:flex;gap:2.5rem;margin-top:4.5rem;padding-top:2.5rem;border-top:0.5px solid var(--border);opacity:0;animation:fadeup 0.7s 0.7s forwards}
+.stat-num{font-family:'Syne',sans-serif;font-size:1.8rem;font-weight:700;color:var(--white);line-height:1}
+.stat-label{font-size:0.78rem;color:var(--gray);margin-top:4px}
+@keyframes fadeup{from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:translateY(0)}}
+
+/* SECTION */
+.section{padding:6rem 2.5rem;max-width:1100px;margin:0 auto}
+.s-tag{font-size:0.7rem;letter-spacing:0.2em;color:var(--gold);text-transform:uppercase;margin-bottom:0.8rem}
+.s-title{font-family:'Syne',sans-serif;font-size:clamp(2rem,4.5vw,3.2rem);font-weight:700;line-height:1.1;letter-spacing:-0.02em;margin-bottom:3.5rem}
+
+/* HOW */
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--border);border:0.5px solid var(--border);border-radius:16px;overflow:hidden}
+.step{background:var(--bg2);padding:2.5rem 2rem;transition:background 0.3s}
+.step:hover{background:var(--bg3)}
+.step-n{font-family:'Syne',sans-serif;font-size:2.5rem;font-weight:800;color:rgba(201,168,76,0.15);line-height:1;margin-bottom:1.2rem}
+.step h3{font-family:'Syne',sans-serif;font-size:1rem;font-weight:600;margin-bottom:0.6rem;color:var(--white)}
+.step p{font-size:0.88rem;color:var(--gray2);line-height:1.65}
+
+/* FEATURES BENTO */
+.bento{display:grid;grid-template-columns:repeat(3,1fr);grid-template-rows:auto auto;gap:12px}
+.bento-card{background:var(--bg2);border:0.5px solid var(--border);border-radius:16px;padding:2rem;transition:border-color 0.3s,background 0.3s}
+.bento-card:hover{border-color:var(--gold-border);background:var(--bg3)}
+.bento-card.wide{grid-column:span 2}
+.bento-card.tall{grid-row:span 2}
+.bento-icon{width:38px;height:38px;background:var(--gold-dim);border:0.5px solid var(--gold-border);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.1rem;margin-bottom:1.2rem}
+.bento-card h3{font-family:'Syne',sans-serif;font-size:0.95rem;font-weight:600;margin-bottom:0.5rem}
+.bento-card p{font-size:0.85rem;color:var(--gray2);line-height:1.65}
+.bento-big-num{font-family:'Syne',sans-serif;font-size:3.5rem;font-weight:800;color:var(--gold);line-height:1;margin:1rem 0 0.3rem}
+
+/* PRICING */
+.pricing{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:0}
+.plan{background:var(--bg2);border:0.5px solid var(--border);border-radius:16px;padding:2.2rem 2rem;position:relative;transition:border-color 0.3s}
+.plan:hover{border-color:var(--gold-border)}
+.plan.hot{border-color:var(--gold-border);background:rgba(201,168,76,0.04)}
+.plan-badge{position:absolute;top:-11px;left:50%;transform:translateX(-50%);background:var(--gold);color:#000;font-size:0.65rem;font-weight:600;letter-spacing:0.08em;padding:0.25rem 0.8rem;border-radius:20px;white-space:nowrap;font-family:'Inter',sans-serif}
+.plan-name{font-size:0.72rem;letter-spacing:0.12em;color:var(--gold);text-transform:uppercase;margin-bottom:1.2rem;font-family:'Inter',sans-serif}
+.plan-price{font-family:'Syne',sans-serif;font-size:3rem;font-weight:800;line-height:1;margin-bottom:0.3rem}
+.plan-period{font-size:0.8rem;color:var(--gray);margin-bottom:1.8rem}
+.plan-list{list-style:none}
+.plan-list li{font-size:0.83rem;color:var(--gray2);padding:0.45rem 0;border-bottom:0.5px solid var(--border);display:flex;align-items:center;gap:8px}
+.plan-list li:last-child{border-bottom:none}
+.plan-list li::before{content:'';width:5px;height:5px;border-radius:50%;background:var(--gold);flex-shrink:0}
+.plan-btn{display:block;text-align:center;margin-top:1.8rem;padding:0.75rem;border-radius:8px;font-family:'Inter',sans-serif;font-size:0.83rem;font-weight:500;text-decoration:none;transition:all 0.2s;border:0.5px solid var(--border);color:var(--gray2)}
+.plan.hot .plan-btn{background:var(--gold);color:#000;border-color:var(--gold)}
+.plan-btn:hover{border-color:var(--gold-border);color:var(--white)}
+.plan.hot .plan-btn:hover{background:#dbb85a}
+
+/* FAQ */
+.faq{margin-top:0}
+.faq-item{border-bottom:0.5px solid var(--border);padding:1.5rem 0;cursor:pointer}
+.faq-q{font-family:'Syne',sans-serif;font-size:0.95rem;font-weight:600;display:flex;justify-content:space-between;align-items:center;gap:1rem;transition:color 0.2s}
+.faq-item:hover .faq-q{color:var(--gold)}
+.faq-q::after{content:'+';color:var(--gold);font-size:1.3rem;font-weight:300;transition:transform 0.3s;flex-shrink:0;font-family:'Inter',sans-serif}
+.faq-item.open .faq-q::after{transform:rotate(45deg)}
+.faq-a{font-size:0.88rem;color:var(--gray2);line-height:1.75;max-height:0;overflow:hidden;transition:max-height 0.4s ease,padding 0.3s}
+.faq-item.open .faq-a{max-height:200px;padding-top:1rem}
+
+/* SUPPORT */
+.support-wrap{background:var(--bg2);border:0.5px solid var(--border);border-radius:20px;padding:3rem;text-align:center;position:relative;overflow:hidden}
+.support-wrap::before{content:'';position:absolute;top:-60px;left:50%;transform:translateX(-50%);width:200px;height:200px;border-radius:50%;background:rgba(201,168,76,0.05);pointer-events:none}
+.support-wrap h2{font-family:'Syne',sans-serif;font-size:1.8rem;font-weight:700;margin-bottom:0.8rem}
+.support-wrap p{color:var(--gray2);font-size:0.92rem;margin-bottom:2rem;max-width:400px;margin-left:auto;margin-right:auto;line-height:1.7}
+.support-btns{display:flex;justify-content:center;gap:1rem;flex-wrap:wrap}
+.btn-support{display:inline-flex;align-items:center;gap:8px;background:var(--gold-dim);border:0.5px solid var(--gold-border);color:var(--gold);font-family:'Inter',sans-serif;font-size:0.88rem;font-weight:500;padding:0.8rem 1.8rem;border-radius:10px;text-decoration:none;transition:all 0.2s}
+.btn-support:hover{background:rgba(201,168,76,0.2);transform:translateY(-1px)}
+
+/* CTA BOTTOM */
+.cta-bottom{text-align:center;padding:7rem 2.5rem;position:relative}
+.cta-bottom::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 50% 70% at 50% 100%,rgba(201,168,76,0.07),transparent 70%);pointer-events:none}
+.cta-bottom .s-title{margin-bottom:1.2rem}
+.cta-bottom .hero-sub{margin:0 auto 2.5rem;text-align:center}
+.trial-note{font-size:0.78rem;color:var(--gray);margin-top:1rem}
+
+/* FOOTER */
+footer{border-top:0.5px solid var(--border);padding:2rem 2.5rem;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem}
+.footer-logo{font-family:'Syne',sans-serif;font-weight:700;font-size:0.9rem;color:var(--gray)}
+.footer-links{display:flex;gap:1.5rem}
+.footer-links a{font-size:0.78rem;color:var(--gray);text-decoration:none;transition:color 0.2s}
+.footer-links a:hover{color:var(--gold)}
+
+/* MOBILE */
+@media(max-width:700px){
+  nav{padding:1rem 1.2rem}
+  .hero{padding:7rem 1.2rem 4rem}
+  .section{padding:4rem 1.2rem}
+  .steps{grid-template-columns:1fr}
+  .bento{grid-template-columns:1fr}
+  .bento-card.wide{grid-column:span 1}
+  .pricing{grid-template-columns:1fr}
+  .support-wrap{padding:2rem 1.5rem}
+  footer{flex-direction:column;text-align:center}
+  .hero-stats{gap:1.5rem;flex-wrap:wrap}
+}
+
+/* LANG */
+.ls{display:none}.ls.active{display:block}
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="#" class="nav-logo">
+    <span class="live-dot"></span>
+    SAGA Bot
+  </a>
+  <div class="nav-right">
+    <button class="lang-btn active" onclick="setLang('de',this)">DE</button>
+    <button class="lang-btn" onclick="setLang('uk',this)">UA</button>
+    <button class="lang-btn" onclick="setLang('en',this)">EN</button>
+    <a href="https://t.me/Poschuck_bot" class="nav-cta" target="_blank">
+      <svg class="tg-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.6 0 12 0zm5.5 8.2-2 9.6c-.2.7-.6.8-1.1.5l-3.1-2.3-1.5 1.4c-.2.2-.3.3-.6.3l.2-3.2 5.8-5.2c.2-.2-.1-.3-.4-.1L7.4 14.7l-3-.9c-.7-.2-.7-.7.1-1L17.3 7.3c.5-.2 1 .1.2.9z"/></svg>
+      Starten
+    </a>
+  </div>
+</nav>
+
+<!-- ═══ DEUTSCH ═══ -->
+<div id="l-de" class="ls active">
+
+<div class="hero">
+  <div class="hero-badge">
+    <span class="live-dot"></span>
+    Live · SAGA Hamburg
+  </div>
+  <h1 class="hero-h1">Deine Wohnung<br>wartet <em>nicht</em><br>auf dich.</h1>
+  <p class="hero-sub">Der Bot bewirbt sich automatisch auf neue SAGA-Wohnungen — rund um die Uhr, bevor andere es sehen.</p>
+  <div class="hero-actions">
+    <a href="https://t.me/Poschuck_bot" class="btn-primary" target="_blank">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.6 0 12 0zm5.5 8.2-2 9.6c-.2.7-.6.8-1.1.5l-3.1-2.3-1.5 1.4c-.2.2-.3.3-.6.3l.2-3.2 5.8-5.2c.2-.2-.1-.3-.4-.1L7.4 14.7l-3-.9c-.7-.2-.7-.7.1-1L17.3 7.3c.5-.2 1 .1.2.9z"/></svg>
+      Kostenlos testen
+    </a>
+    <a href="#how" class="btn-secondary">Wie funktioniert es? →</a>
+  </div>
+  <div class="hero-stats">
+    <div><div class="stat-num">10</div><div class="stat-label">Tage gratis</div></div>
+    <div><div class="stat-num">24/7</div><div class="stat-label">Automatisch</div></div>
+    <div><div class="stat-num">€19</div><div class="stat-label">Ab / Monat</div></div>
+  </div>
+</div>
+
+<div class="section" id="how">
+  <div class="s-tag">So funktioniert es</div>
+  <h2 class="s-title">In 3 Schritten<br>zur Traumwohnung</h2>
+  <div class="steps">
+    <div class="step"><div class="step-n">01</div><h3>Registrieren</h3><p>Immomio-Konto verbinden und Filter setzen. Alles direkt in Telegram — keine App nötig.</p></div>
+    <div class="step"><div class="step-n">02</div><h3>Bot läuft</h3><p>Der Bot scannt SAGA automatisch und bewirbt sich sofort auf passende Wohnungen.</p></div>
+    <div class="step"><div class="step-n">03</div><h3>Einzug</h3><p>Du bekommst eine Nachricht bei einer Besichtigungseinladung. Einfach hingehen.</p></div>
+  </div>
+</div>
+
+<div class="section">
+  <div class="s-tag">Funktionen</div>
+  <h2 class="s-title">Alles was<br>du brauchst</h2>
+  <div class="bento">
+    <div class="bento-card wide">
+      <div class="bento-icon">⚡</div>
+      <h3>Blitzschnell bewerben</h3>
+      <p>Der Bot findet neue Wohnungen sofort und bewirbt sich automatisch — bevor die meisten die Seite auch nur geöffnet haben.</p>
+    </div>
+    <div class="bento-card">
+      <div class="bento-icon">🔔</div>
+      <h3>Status-Updates</h3>
+      <p>Benachrichtigung wenn deine Bewerbung angesehen oder eine Einladung verschickt wurde.</p>
+    </div>
+    <div class="bento-card">
+      <div class="bento-big-num">10</div>
+      <div class="s-tag" style="margin:0">Tage gratis</div>
+      <p style="margin-top:0.5rem;font-size:0.82rem">Keine Kreditkarte nötig.</p>
+    </div>
+    <div class="bento-card">
+      <div class="bento-icon">🔍</div>
+      <h3>Smarte Filter</h3>
+      <p>Zimmer, Mietpreis — nur relevante Wohnungen.</p>
+    </div>
+    <div class="bento-card">
+      <div class="bento-icon">👥</div>
+      <h3>Freunde einladen</h3>
+      <p>Für jeden Freund den du einlädst, bekommt ihr beide +3 Tage gratis.</p>
+    </div>
+    <div class="bento-card">
+      <div class="bento-icon">⏸</div>
+      <h3>Pause jederzeit</h3>
+      <p>Wohnung gefunden? Bot pausieren ohne Abo zu verlieren.</p>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <div class="s-tag">Preise</div>
+  <h2 class="s-title">Einfach.<br>Transparent.</h2>
+  <div class="pricing">
+    <div class="plan">
+      <div class="plan-name">Starter</div>
+      <div class="plan-price">€19</div>
+      <div class="plan-period">pro Monat</div>
+      <ul class="plan-list">
+        <li>Automatische Bewerbungen</li>
+        <li>Filter & Benachrichtigungen</li>
+        <li>Status-Tracking</li>
+      </ul>
+      <a href="https://t.me/Poschuck_bot" class="plan-btn" target="_blank">Starten</a>
+    </div>
+    <div class="plan hot">
+      <div class="plan-badge">Beliebt</div>
+      <div class="plan-name">Standard</div>
+      <div class="plan-price">€29</div>
+      <div class="plan-period">2 Monate · 24% Rabatt</div>
+      <ul class="plan-list">
+        <li>Alles aus Starter</li>
+        <li>Priorität-Support</li>
+        <li>Telegram Stars oder TON</li>
+      </ul>
+      <a href="https://t.me/Poschuck_bot" class="plan-btn" target="_blank">Jetzt starten</a>
+    </div>
+    <div class="plan">
+      <div class="plan-name">Premium</div>
+      <div class="plan-price">€39</div>
+      <div class="plan-period">4 Monate · +1 Monat gratis</div>
+      <ul class="plan-list">
+        <li>Alles aus Standard</li>
+        <li>1 Bonus-Monat</li>
+        <li>Frühzugang zu Features</li>
+      </ul>
+      <a href="https://t.me/Poschuck_bot" class="plan-btn" target="_blank">Starten</a>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <div class="s-tag">FAQ</div>
+  <h2 class="s-title">Häufige<br>Fragen</h2>
+  <div class="faq">
+    <div class="faq-item"><div class="faq-q">Brauche ich ein Immomio-Konto?</div><div class="faq-a">Ja. Immomio ist die Plattform über die SAGA alle Bewerbungen annimmt. Die Registrierung ist kostenlos auf tenant.immomio.com. Profil zu 100% ausfüllen und Dokumente hochladen — dann läuft alles automatisch.</div></div>
+    <div class="faq-item"><div class="faq-q">Wie sicher sind meine Daten?</div><div class="faq-a">Dein Passwort wird verschlüsselt gespeichert. Wir haben keinen Zugriff auf dein Konto außer für automatische Bewerbungen im deinen Namen.</div></div>
+    <div class="faq-item"><div class="faq-q">Was passiert nach dem Testzeitraum?</div><div class="faq-a">Du bekommst 3 Tage vorher eine Erinnerung. Du kannst direkt im Bot mit Telegram Stars oder TON verlängern.</div></div>
+    <div class="faq-item"><div class="faq-q">Läuft der Bot wirklich 24/7?</div><div class="faq-a">Ja. Der Bot läuft auf einem Server und ist immer aktiv — auch wenn dein Handy ausgeschaltet ist.</div></div>
+    <div class="faq-item"><div class="faq-q">Was wenn mein Profil nicht vollständig ist?</div><div class="faq-a">Der Bot prüft dein Immomio-Profil. Wenn etwas fehlt, bekommst du eine Warnung mit direktem Link zum Ausfüllen.</div></div>
+  </div>
+</div>
+
+<div class="section">
+  <div class="support-wrap">
+    <div class="s-tag" style="margin-bottom:1rem">Support</div>
+    <h2 style="font-family:'Syne',sans-serif;font-size:1.8rem;font-weight:700;margin-bottom:0.8rem">Fragen? Wir helfen.</h2>
+    <p>Unser Support-Team ist über Telegram erreichbar und antwortet schnell.</p>
+    <div class="support-btns">
+      <a href="https://t.me/Poschuck_bot" class="btn-primary" target="_blank">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.6 0 12 0zm5.5 8.2-2 9.6c-.2.7-.6.8-1.1.5l-3.1-2.3-1.5 1.4c-.2.2-.3.3-.6.3l.2-3.2 5.8-5.2c.2-.2-.1-.3-.4-.1L7.4 14.7l-3-.9c-.7-.2-.7-.7.1-1L17.3 7.3c.5-.2 1 .1.2.9z"/></svg>
+        Bot starten
+      </a>
+      <a href="https://t.me/sagaAdminn" class="btn-support" target="_blank">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.6 0 12 0zm5.5 8.2-2 9.6c-.2.7-.6.8-1.1.5l-3.1-2.3-1.5 1.4c-.2.2-.3.3-.6.3l.2-3.2 5.8-5.2c.2-.2-.1-.3-.4-.1L7.4 14.7l-3-.9c-.7-.2-.7-.7.1-1L17.3 7.3c.5-.2 1 .1.2.9z"/></svg>
+        Support kontaktieren
+      </a>
+    </div>
+  </div>
+</div>
+
+<div class="cta-bottom">
+  <div class="s-tag">Jetzt starten</div>
+  <h2 class="s-title">10 Tage<br><em style="font-style:italic;color:var(--gold)">kostenlos testen.</em></h2>
+  <p class="hero-sub">Keine Kreditkarte. Keine App. Nur Telegram.</p>
+  <a href="https://t.me/Poschuck_bot" class="btn-primary" style="display:inline-flex;margin:0 auto" target="_blank">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.6 0 12 0zm5.5 8.2-2 9.6c-.2.7-.6.8-1.1.5l-3.1-2.3-1.5 1.4c-.2.2-.3.3-.6.3l.2-3.2 5.8-5.2c.2-.2-.1-.3-.4-.1L7.4 14.7l-3-.9c-.7-.2-.7-.7.1-1L17.3 7.3c.5-.2 1 .1.2.9z"/></svg>
+    @Poschuck_bot öffnen
+  </a>
+  <div class="trial-note">Kein Risiko · Jederzeit kündbar</div>
+</div>
+
+<footer>
+  <div class="footer-logo">SAGA Apartment Bot</div>
+  <div class="footer-links">
+    <a href="https://t.me/Poschuck_bot" target="_blank">@Poschuck_bot</a>
+    <a href="https://t.me/sagaAdminn" target="_blank">Support</a>
+  </div>
+</footer>
+</div>
+
+<!-- ═══ УКРАЇНСЬКА ═══ -->
+<div id="l-uk" class="ls">
+<div class="hero">
+  <div class="hero-badge"><span class="live-dot"></span>Живий · SAGA Hamburg</div>
+  <h1 class="hero-h1">Твоя квартира<br><em>не чекає</em><br>на тебе.</h1>
+  <p class="hero-sub">Бот автоматично подає заявки на нові квартири SAGA — цілодобово, раніше ніж інші встигають відкрити сайт.</p>
+  <div class="hero-actions">
+    <a href="https://t.me/Poschuck_bot" class="btn-primary" target="_blank">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.6 0 12 0zm5.5 8.2-2 9.6c-.2.7-.6.8-1.1.5l-3.1-2.3-1.5 1.4c-.2.2-.3.3-.6.3l.2-3.2 5.8-5.2c.2-.2-.1-.3-.4-.1L7.4 14.7l-3-.9c-.7-.2-.7-.7.1-1L17.3 7.3c.5-.2 1 .1.2.9z"/></svg>
+      Спробувати безкоштовно
+    </a>
+    <a href="#" class="btn-secondary" onclick="document.getElementById('l-uk').querySelector('.faq').scrollIntoView({behavior:'smooth'});return false">Часті питання →</a>
+  </div>
+  <div class="hero-stats">
+    <div><div class="stat-num">10</div><div class="stat-label">Днів безкоштовно</div></div>
+    <div><div class="stat-num">24/7</div><div class="stat-label">Автоматично</div></div>
+    <div><div class="stat-num">€19</div><div class="stat-label">Від / місяць</div></div>
+  </div>
+</div>
+<div class="section">
+  <div class="s-tag">Як це працює</div>
+  <h2 class="s-title">3 кроки до<br>нової квартири</h2>
+  <div class="steps">
+    <div class="step"><div class="step-n">01</div><h3>Реєстрація</h3><p>Підключи акаунт Immomio і встанови фільтри. Все в Telegram — без завантажень.</p></div>
+    <div class="step"><div class="step-n">02</div><h3>Бот працює</h3><p>Бот сканує SAGA і миттєво подає заявки на підходящі квартири.</p></div>
+    <div class="step"><div class="step-n">03</div><h3>Заїзд</h3><p>Отримай повідомлення про запрошення на огляд і просто прийди.</p></div>
+  </div>
+</div>
+<div class="section">
+  <div class="s-tag">Можливості</div>
+  <h2 class="s-title">Все що<br>потрібно</h2>
+  <div class="bento">
+    <div class="bento-card wide"><div class="bento-icon">⚡</div><h3>Миттєві заявки</h3><p>Бот знаходить нові квартири і подає заявку автоматично — раніше ніж більшість відкриє сайт.</p></div>
+    <div class="bento-card"><div class="bento-icon">🔔</div><h3>Статус заявок</h3><p>Повідомлення коли заявку переглянули або запросили на огляд.</p></div>
+    <div class="bento-card"><div class="bento-big-num">10</div><div class="s-tag" style="margin:0">Днів безкоштовно</div><p style="margin-top:0.5rem;font-size:0.82rem">Без карток.</p></div>
+    <div class="bento-card"><div class="bento-icon">🔍</div><h3>Фільтри</h3><p>Кімнати, ціна — тільки потрібні квартири.</p></div>
+    <div class="bento-card"><div class="bento-icon">👥</div><h3>Реферали</h3><p>Запроси друга — обидва отримують +3 дні безкоштовно.</p></div>
+    <div class="bento-card"><div class="bento-icon">⏸</div><h3>Пауза</h3><p>Знайшов квартиру? Поставити на паузу без втрати підписки.</p></div>
+  </div>
+</div>
+<div class="section">
+  <div class="s-tag">Тарифи</div>
+  <h2 class="s-title">Просто.<br>Прозоро.</h2>
+  <div class="pricing">
+    <div class="plan"><div class="plan-name">Стартер</div><div class="plan-price">€19</div><div class="plan-period">на місяць</div><ul class="plan-list"><li>Автоматичні заявки</li><li>Фільтри і сповіщення</li><li>Відстеження статусу</li></ul><a href="https://t.me/Poschuck_bot" class="plan-btn" target="_blank">Почати</a></div>
+    <div class="plan hot"><div class="plan-badge">Популярний</div><div class="plan-name">Стандарт</div><div class="plan-price">€29</div><div class="plan-period">2 місяці · знижка 24%</div><ul class="plan-list"><li>Все зі Стартера</li><li>Пріоритетна підтримка</li><li>Stars або TON</li></ul><a href="https://t.me/Poschuck_bot" class="plan-btn" target="_blank">Почати зараз</a></div>
+    <div class="plan"><div class="plan-name">Преміум</div><div class="plan-price">€39</div><div class="plan-period">4 місяці · +1 місяць у подарунок</div><ul class="plan-list"><li>Все зі Стандарту</li><li>1 бонусний місяць</li><li>Ранній доступ</li></ul><a href="https://t.me/Poschuck_bot" class="plan-btn" target="_blank">Почати</a></div>
+  </div>
+</div>
+<div class="section">
+  <div class="s-tag">FAQ</div>
+  <h2 class="s-title">Часті<br>питання</h2>
+  <div class="faq">
+    <div class="faq-item"><div class="faq-q">Чи потрібен акаунт Immomio?</div><div class="faq-a">Так. Immomio — платформа через яку SAGA приймає всі заявки. Реєстрація безкоштовна на tenant.immomio.com. Заповни профіль на 100% і завантаж документи.</div></div>
+    <div class="faq-item"><div class="faq-q">Чи безпечні мої дані?</div><div class="faq-a">Пароль зберігається зашифрованим. Ми маємо доступ до твого акаунту тільки для подачі заявок від твого імені.</div></div>
+    <div class="faq-item"><div class="faq-q">Що після тріалу?</div><div class="faq-a">За 3 дні до кінця прийде нагадування. Продовжити можна через Telegram Stars або TON прямо в боті.</div></div>
+    <div class="faq-item"><div class="faq-q">Бот працює цілодобово?</div><div class="faq-a">Так. Бот запущений на сервері і завжди активний — навіть коли телефон вимкнений.</div></div>
+  </div>
+</div>
+<div class="section">
+  <div class="support-wrap">
+    <div class="s-tag" style="margin-bottom:1rem">Підтримка</div>
+    <h2 style="font-family:'Syne',sans-serif;font-size:1.8rem;font-weight:700;margin-bottom:0.8rem">Питання? Ми допоможемо.</h2>
+    <p>Команда підтримки доступна в Telegram і відповідає швидко.</p>
+    <div class="support-btns">
+      <a href="https://t.me/Poschuck_bot" class="btn-primary" target="_blank"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.6 0 12 0zm5.5 8.2-2 9.6c-.2.7-.6.8-1.1.5l-3.1-2.3-1.5 1.4c-.2.2-.3.3-.6.3l.2-3.2 5.8-5.2c.2-.2-.1-.3-.4-.1L7.4 14.7l-3-.9c-.7-.2-.7-.7.1-1L17.3 7.3c.5-.2 1 .1.2.9z"/></svg>Запустити бота</a>
+      <a href="https://t.me/sagaAdminn" class="btn-support" target="_blank"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.6 0 12 0zm5.5 8.2-2 9.6c-.2.7-.6.8-1.1.5l-3.1-2.3-1.5 1.4c-.2.2-.3.3-.6.3l.2-3.2 5.8-5.2c.2-.2-.1-.3-.4-.1L7.4 14.7l-3-.9c-.7-.2-.7-.7.1-1L17.3 7.3c.5-.2 1 .1.2.9z"/></svg>Написати в підтримку</a>
+    </div>
+  </div>
+</div>
+<div class="cta-bottom">
+  <div class="s-tag">Почати</div>
+  <h2 class="s-title">10 днів<br><em style="font-style:italic;color:var(--gold)">безкоштовно.</em></h2>
+  <p class="hero-sub">Без карток. Без застосунків. Тільки Telegram.</p>
+  <a href="https://t.me/Poschuck_bot" class="btn-primary" style="display:inline-flex;margin:0 auto" target="_blank"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.6 0 12 0zm5.5 8.2-2 9.6c-.2.7-.6.8-1.1.5l-3.1-2.3-1.5 1.4c-.2.2-.3.3-.6.3l.2-3.2 5.8-5.2c.2-.2-.1-.3-.4-.1L7.4 14.7l-3-.9c-.7-.2-.7-.7.1-1L17.3 7.3c.5-.2 1 .1.2.9z"/></svg>Відкрити @Poschuck_bot</a>
+  <div class="trial-note">Без ризику · Скасувати будь-коли</div>
+</div>
+<footer><div class="footer-logo">SAGA Apartment Bot</div><div class="footer-links"><a href="https://t.me/Poschuck_bot" target="_blank">@Poschuck_bot</a><a href="https://t.me/sagaAdminn" target="_blank">Підтримка</a></div></footer>
+</div>
+
+<!-- ═══ ENGLISH ═══ -->
+<div id="l-en" class="ls">
+<div class="hero">
+  <div class="hero-badge"><span class="live-dot"></span>Live · SAGA Hamburg</div>
+  <h1 class="hero-h1">Your apartment<br>won't wait<br><em>for you.</em></h1>
+  <p class="hero-sub">The bot automatically applies to new SAGA apartments — around the clock, before others even open the website.</p>
+  <div class="hero-actions">
+    <a href="https://t.me/Poschuck_bot" class="btn-primary" target="_blank"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.6 0 12 0zm5.5 8.2-2 9.6c-.2.7-.6.8-1.1.5l-3.1-2.3-1.5 1.4c-.2.2-.3.3-.6.3l.2-3.2 5.8-5.2c.2-.2-.1-.3-.4-.1L7.4 14.7l-3-.9c-.7-.2-.7-.7.1-1L17.3 7.3c.5-.2 1 .1.2.9z"/></svg>Start for free</a>
+    <a href="#" class="btn-secondary">How it works →</a>
+  </div>
+  <div class="hero-stats">
+    <div><div class="stat-num">10</div><div class="stat-label">Days free</div></div>
+    <div><div class="stat-num">24/7</div><div class="stat-label">Automatic</div></div>
+    <div><div class="stat-num">€19</div><div class="stat-label">From / month</div></div>
+  </div>
+</div>
+<div class="section">
+  <div class="s-tag">How it works</div>
+  <h2 class="s-title">3 steps to<br>your new home</h2>
+  <div class="steps">
+    <div class="step"><div class="step-n">01</div><h3>Register</h3><p>Connect your Immomio account and set filters. All in Telegram — no downloads needed.</p></div>
+    <div class="step"><div class="step-n">02</div><h3>Bot runs</h3><p>The bot scans SAGA and instantly applies to matching apartments.</p></div>
+    <div class="step"><div class="step-n">03</div><h3>Move in</h3><p>Get notified when a viewing is confirmed. Just show up.</p></div>
+  </div>
+</div>
+<div class="section">
+  <div class="s-tag">Features</div>
+  <h2 class="s-title">Everything<br>you need</h2>
+  <div class="bento">
+    <div class="bento-card wide"><div class="bento-icon">⚡</div><h3>Instant applications</h3><p>The bot finds new listings and applies automatically — before most people even open the page.</p></div>
+    <div class="bento-card"><div class="bento-icon">🔔</div><h3>Status updates</h3><p>Notification when your application is viewed or a viewing invite is sent.</p></div>
+    <div class="bento-card"><div class="bento-big-num">10</div><div class="s-tag" style="margin:0">Days free</div><p style="margin-top:0.5rem;font-size:0.82rem">No card needed.</p></div>
+    <div class="bento-card"><div class="bento-icon">🔍</div><h3>Smart filters</h3><p>Rooms, rent — only relevant apartments.</p></div>
+    <div class="bento-card"><div class="bento-icon">👥</div><h3>Referrals</h3><p>Invite a friend — both get +3 days free.</p></div>
+    <div class="bento-card"><div class="bento-icon">⏸</div><h3>Pause anytime</h3><p>Found a place? Pause without losing your subscription.</p></div>
+  </div>
+</div>
+<div class="section">
+  <div class="s-tag">Pricing</div>
+  <h2 class="s-title">Simple.<br>Transparent.</h2>
+  <div class="pricing">
+    <div class="plan"><div class="plan-name">Starter</div><div class="plan-price">€19</div><div class="plan-period">per month</div><ul class="plan-list"><li>Automatic applications</li><li>Filters & notifications</li><li>Status tracking</li></ul><a href="https://t.me/Poschuck_bot" class="plan-btn" target="_blank">Start</a></div>
+    <div class="plan hot"><div class="plan-badge">Popular</div><div class="plan-name">Standard</div><div class="plan-price">€29</div><div class="plan-period">2 months · 24% off</div><ul class="plan-list"><li>Everything in Starter</li><li>Priority support</li><li>Stars or TON</li></ul><a href="https://t.me/Poschuck_bot" class="plan-btn" target="_blank">Start now</a></div>
+    <div class="plan"><div class="plan-name">Premium</div><div class="plan-price">€39</div><div class="plan-period">4 months · +1 month free</div><ul class="plan-list"><li>Everything in Standard</li><li>1 bonus month</li><li>Early feature access</li></ul><a href="https://t.me/Poschuck_bot" class="plan-btn" target="_blank">Start</a></div>
+  </div>
+</div>
+<div class="section">
+  <div class="s-tag">FAQ</div>
+  <h2 class="s-title">Common<br>questions</h2>
+  <div class="faq">
+    <div class="faq-item"><div class="faq-q">Do I need an Immomio account?</div><div class="faq-a">Yes. Immomio is the platform SAGA uses for all applications. Registration is free at tenant.immomio.com. Fill your profile 100% and upload documents.</div></div>
+    <div class="faq-item"><div class="faq-q">Is my data safe?</div><div class="faq-a">Your password is stored encrypted. We only access your account to submit applications on your behalf.</div></div>
+    <div class="faq-item"><div class="faq-q">What happens after the trial?</div><div class="faq-a">You get a reminder 3 days before it ends. Renew with Telegram Stars or TON directly in the bot.</div></div>
+    <div class="faq-item"><div class="faq-q">Does the bot run 24/7?</div><div class="faq-a">Yes. The bot runs on a server and is always active — even when your phone is off.</div></div>
+  </div>
+</div>
+<div class="section">
+  <div class="support-wrap">
+    <div class="s-tag" style="margin-bottom:1rem">Support</div>
+    <h2 style="font-family:'Syne',sans-serif;font-size:1.8rem;font-weight:700;margin-bottom:0.8rem">Questions? We help.</h2>
+    <p>Our support team is available on Telegram and responds quickly.</p>
+    <div class="support-btns">
+      <a href="https://t.me/Poschuck_bot" class="btn-primary" target="_blank"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.6 0 12 0zm5.5 8.2-2 9.6c-.2.7-.6.8-1.1.5l-3.1-2.3-1.5 1.4c-.2.2-.3.3-.6.3l.2-3.2 5.8-5.2c.2-.2-.1-.3-.4-.1L7.4 14.7l-3-.9c-.7-.2-.7-.7.1-1L17.3 7.3c.5-.2 1 .1.2.9z"/></svg>Start bot</a>
+      <a href="https://t.me/sagaAdminn" class="btn-support" target="_blank"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.6 0 12 0zm5.5 8.2-2 9.6c-.2.7-.6.8-1.1.5l-3.1-2.3-1.5 1.4c-.2.2-.3.3-.6.3l.2-3.2 5.8-5.2c.2-.2-.1-.3-.4-.1L7.4 14.7l-3-.9c-.7-.2-.7-.7.1-1L17.3 7.3c.5-.2 1 .1.2.9z"/></svg>Contact support</a>
+    </div>
+  </div>
+</div>
+<div class="cta-bottom">
+  <div class="s-tag">Get started</div>
+  <h2 class="s-title">10 days<br><em style="font-style:italic;color:var(--gold)">completely free.</em></h2>
+  <p class="hero-sub">No credit card. No app. Just Telegram.</p>
+  <a href="https://t.me/Poschuck_bot" class="btn-primary" style="display:inline-flex;margin:0 auto" target="_blank"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.6 0 12 0zm5.5 8.2-2 9.6c-.2.7-.6.8-1.1.5l-3.1-2.3-1.5 1.4c-.2.2-.3.3-.6.3l.2-3.2 5.8-5.2c.2-.2-.1-.3-.4-.1L7.4 14.7l-3-.9c-.7-.2-.7-.7.1-1L17.3 7.3c.5-.2 1 .1.2.9z"/></svg>Open @Poschuck_bot</a>
+  <div class="trial-note">No risk · Cancel anytime</div>
+</div>
+<footer><div class="footer-logo">SAGA Apartment Bot</div><div class="footer-links"><a href="https://t.me/Poschuck_bot" target="_blank">@Poschuck_bot</a><a href="https://t.me/sagaAdminn" target="_blank">Support</a></div></footer>
+</div>
+
+<script>
+function setLang(l,btn){
+  document.querySelectorAll('.ls').forEach(e=>e.classList.remove('active'));
+  document.querySelectorAll('.lang-btn').forEach(e=>e.classList.remove('active'));
+  document.getElementById('l-'+l).classList.add('active');
+  btn.classList.add('active');
+  localStorage.setItem('lang',l);
+  window.scrollTo(0,0);
+}
+(function(){
+  const s=localStorage.getItem('lang');
+  const n=navigator.language?.slice(0,2).toLowerCase();
+  const l=s||(['de','uk','en'].includes(n)?n:'de');
+  if(l!=='de'){
+    document.getElementById('l-de').classList.remove('active');
+    document.getElementById('l-'+l).classList.add('active');
+    document.querySelector('[onclick*="de"]').classList.remove('active');
+    const b=document.querySelector('[onclick*="\''+l+'\'"]');
+    if(b)b.classList.add('active');
+  }
+})();
+document.querySelectorAll('.faq-item').forEach(i=>{
+  i.addEventListener('click',()=>i.classList.toggle('open'));
+});
+const obs=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{if(e.isIntersecting){e.target.style.opacity='1';e.target.style.transform='translateY(0)'}});
+},{threshold:0.1});
+document.querySelectorAll('.step,.bento-card,.plan,.faq-item').forEach(el=>{
+  el.style.opacity='0';el.style.transform='translateY(18px)';
+  el.style.transition='opacity 0.55s ease,transform 0.55s ease';
+  obs.observe(el);
+});
+</script>
+</body>
+</html>
