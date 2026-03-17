@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SAGA Apartment Bot</title>
-<meta name="description" content="Automatische Wohnungsbewerbungen für SAGA Hamburg. Kein Verpassen mehr.">
+<title>SAGA Scout</title>
+<meta name="description" content="SAGA Scout — automatische Wohnungsbewerbungen für SAGA Hamburg.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
@@ -33,7 +33,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;justify-content
 /* HERO */
 .hero{min-height:100vh;display:flex;flex-direction:column;justify-content:center;padding:8rem 2.5rem 5rem;max-width:1100px;margin:0 auto;position:relative}
 .hero-badge{display:inline-flex;align-items:center;gap:7px;background:var(--gold-dim);border:0.5px solid var(--gold-border);color:var(--gold);font-size:0.72rem;letter-spacing:0.1em;padding:0.38rem 0.9rem;border-radius:20px;margin-bottom:2.2rem;font-family:'Inter',sans-serif;opacity:0;animation:fadeup 0.7s 0.1s forwards}
-.hero-h1{font-family:'Syne',sans-serif;font-size:clamp(2.4rem,5vw,4.2rem);font-weight:800;line-height:1.08;letter-spacing:-0.03em;margin-bottom:1.8rem;opacity:0;animation:fadeup 0.7s 0.25s forwards}
+.hero-h1{font-family:'Syne',sans-serif;font-size:clamp(3.2rem,7vw,6.5rem);font-weight:800;line-height:1.02;letter-spacing:-0.03em;margin-bottom:1.8rem;opacity:0;animation:fadeup 0.7s 0.25s forwards}
 .hero-h1 em{font-style:italic;color:var(--gold)}
 .hero-sub{font-size:clamp(1rem,1.8vw,1.15rem);color:var(--gray2);line-height:1.75;max-width:520px;margin-bottom:3rem;opacity:0;animation:fadeup 0.7s 0.4s forwards}
 .hero-actions{display:flex;align-items:center;gap:1rem;flex-wrap:wrap;opacity:0;animation:fadeup 0.7s 0.55s forwards}
@@ -77,7 +77,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;justify-content
 .plan.hot{border-color:var(--gold-border);background:rgba(201,168,76,0.04)}
 .plan-badge{position:absolute;top:-11px;left:50%;transform:translateX(-50%);background:var(--gold);color:#000;font-size:0.65rem;font-weight:600;letter-spacing:0.08em;padding:0.25rem 0.8rem;border-radius:20px;white-space:nowrap;font-family:'Inter',sans-serif}
 .plan-name{font-size:0.72rem;letter-spacing:0.12em;color:var(--gold);text-transform:uppercase;margin-bottom:1.2rem;font-family:'Inter',sans-serif}
-.plan-price{font-family:'Syne',sans-serif;font-size:3rem;font-weight:700;line-height:1;margin-bottom:0.3rem;font-style:normal}
+.plan-price{font-family:'Syne',sans-serif;font-size:3rem;font-weight:800;line-height:1;margin-bottom:0.3rem}
 .plan-period{font-size:0.8rem;color:var(--gray);margin-bottom:1.8rem}
 .plan-list{list-style:none}
 .plan-list li{font-size:0.83rem;color:var(--gray2);padding:0.45rem 0;border-bottom:0.5px solid var(--border);display:flex;align-items:center;gap:8px}
@@ -127,8 +127,6 @@ footer{border-top:0.5px solid var(--border);padding:2rem 2.5rem;display:flex;jus
   .hero{padding:7rem 1.2rem 4rem}
   .section{padding:4rem 1.2rem}
   .steps{grid-template-columns:1fr}
-  .step{padding:1.2rem 1.2rem}
-  .step-n{font-size:1.6rem;margin-bottom:0.6rem}
   .bento{grid-template-columns:1fr}
   .bento-card.wide{grid-column:span 1}
   .pricing{grid-template-columns:1fr}
@@ -136,8 +134,6 @@ footer{border-top:0.5px solid var(--border);padding:2rem 2.5rem;display:flex;jus
   footer{flex-direction:column;text-align:center}
   .hero-stats{gap:1.5rem;flex-wrap:wrap}
 }
-
-
 
 /* LANG */
 .ls{display:none}.ls.active{display:block}
@@ -147,8 +143,30 @@ footer{border-top:0.5px solid var(--border);padding:2rem 2.5rem;display:flex;jus
 
 <nav>
   <a href="#" class="nav-logo">
-    <span class="live-dot"></span>
-    SAGA Bot
+    <svg width="22" height="22" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" style="flex-shrink:0">
+      <!-- ears -->
+      <polygon points="15,45 8,10 38,30" fill="#c9a84c"/>
+      <polygon points="85,45 92,10 62,30" fill="#c9a84c"/>
+      <polygon points="18,42 13,18 35,32" fill="#1a1400"/>
+      <polygon points="82,42 87,18 65,32" fill="#1a1400"/>
+      <!-- face -->
+      <ellipse cx="50" cy="62" rx="36" ry="32" fill="#f0ede6"/>
+      <!-- sunglasses -->
+      <rect x="14" y="50" width="30" height="18" rx="6" fill="#c9a84c"/>
+      <rect x="56" y="50" width="30" height="18" rx="6" fill="#c9a84c"/>
+      <rect x="44" y="55" width="12" height="4" rx="2" fill="#c9a84c"/>
+      <!-- glasses shine -->
+      <line x1="19" y1="54" x2="26" y2="65" stroke="#fff" stroke-width="2.5" stroke-linecap="round" opacity="0.6"/>
+      <line x1="61" y1="54" x2="68" y2="65" stroke="#fff" stroke-width="2.5" stroke-linecap="round" opacity="0.6"/>
+      <!-- nose -->
+      <ellipse cx="50" cy="72" rx="4" ry="3" fill="#c9a84c"/>
+      <!-- whiskers -->
+      <line x1="14" y1="74" x2="42" y2="76" stroke="#888" stroke-width="1.5" stroke-linecap="round"/>
+      <line x1="14" y1="79" x2="42" y2="79" stroke="#888" stroke-width="1.5" stroke-linecap="round"/>
+      <line x1="58" y1="76" x2="86" y2="74" stroke="#888" stroke-width="1.5" stroke-linecap="round"/>
+      <line x1="58" y1="79" x2="86" y2="79" stroke="#888" stroke-width="1.5" stroke-linecap="round"/>
+    </svg>
+    SAGA Scout
   </a>
   <div class="nav-right">
     <button class="lang-btn active" onclick="setLang('de',this)">DE</button>
@@ -169,7 +187,7 @@ footer{border-top:0.5px solid var(--border);padding:2rem 2.5rem;display:flex;jus
     <span class="live-dot"></span>
     Live · SAGA Hamburg
   </div>
-  <h1 class="hero-h1">Deine Wohnung<br>wartet <em>nicht</em><br>auf dich.</h1>
+  <h1 class="hero-h1">Hamburg.<br>Eine Wohnung.<br><em>Sei der Erste.</em></h1>
   <p class="hero-sub">Der Bot bewirbt sich automatisch auf neue SAGA-Wohnungen — rund um die Uhr, bevor andere es sehen.</p>
   <div class="hero-actions">
     <a href="https://t.me/Poschuck_bot" class="btn-primary" target="_blank">
@@ -185,14 +203,13 @@ footer{border-top:0.5px solid var(--border);padding:2rem 2.5rem;display:flex;jus
   </div>
 </div>
 
-
 <div class="section" id="how">
   <div class="s-tag">So funktioniert es</div>
   <h2 class="s-title">In 3 Schritten<br>zur Traumwohnung</h2>
   <div class="steps">
-    <div class="step"><div class="step-n">01</div><h3>Registrieren</h3><p>Immomio-Konto verbinden und Filter setzen. Alles direkt in Telegram — keine App nötig.</p></div>
-    <div class="step"><div class="step-n">02</div><h3>Bot läuft</h3><p>Der Bot scannt SAGA automatisch und bewirbt sich sofort auf passende Wohnungen.</p></div>
-    <div class="step"><div class="step-n">03</div><h3>Einzug</h3><p>Du bekommst eine Nachricht bei einer Besichtigungseinladung. Einfach hingehen.</p></div>
+    <div class="step"><div class="step-n">01</div><h3>Immomio verbinden</h3><p>Gib deine Immomio-Zugangsdaten im Bot ein und stelle Filter ein — Zimmeranzahl und Mietpreis.</p></div>
+    <div class="step"><div class="step-n">02</div><h3>Bot bewirbt sich</h3><p>Neue Wohnung auf SAGA? Der Bot bewirbt sich automatisch — schneller als du die Seite öffnen könntest.</p></div>
+    <div class="step"><div class="step-n">03</div><h3>Besichtigung</h3><p>Du bekommst eine Nachricht sobald SAGA dich einlädt. Termin annehmen und hingehen.</p></div>
   </div>
 </div>
 
@@ -255,8 +272,8 @@ footer{border-top:0.5px solid var(--border);padding:2rem 2.5rem;display:flex;jus
       <div class="plan-period">2 Monate · 24% Rabatt</div>
       <ul class="plan-list">
         <li>Alles aus Starter</li>
-        <li>Priorität-Support</li>
-        <li>Telegram Stars oder TON</li>
+        <li>Stars oder TON Zahlung</li>
+        <li>Längere Laufzeit, mehr sparen</li>
       </ul>
       <a href="https://t.me/Poschuck_bot" class="plan-btn" target="_blank">Jetzt starten</a>
     </div>
@@ -266,8 +283,8 @@ footer{border-top:0.5px solid var(--border);padding:2rem 2.5rem;display:flex;jus
       <div class="plan-period">4 Monate · +1 Monat gratis</div>
       <ul class="plan-list">
         <li>Alles aus Standard</li>
-        <li>1 Bonus-Monat</li>
-        <li>Frühzugang zu Features</li>
+        <li>1 Bonus-Monat gratis</li>
+        <li>Beste Preis pro Monat</li>
       </ul>
       <a href="https://t.me/Poschuck_bot" class="plan-btn" target="_blank">Starten</a>
     </div>
@@ -316,7 +333,7 @@ footer{border-top:0.5px solid var(--border);padding:2rem 2.5rem;display:flex;jus
 </div>
 
 <footer>
-  <div class="footer-logo">SAGA Apartment Bot</div>
+  <div class="footer-logo">SAGA Scout</div>
   <div class="footer-links">
     <a href="https://t.me/Poschuck_bot" target="_blank">@Poschuck_bot</a>
     <a href="https://t.me/sagaAdminn" target="_blank">Support</a>
@@ -328,7 +345,7 @@ footer{border-top:0.5px solid var(--border);padding:2rem 2.5rem;display:flex;jus
 <div id="l-uk" class="ls">
 <div class="hero">
   <div class="hero-badge"><span class="live-dot"></span>Живий · SAGA Hamburg</div>
-  <h1 class="hero-h1">Твоя квартира<br><em>не чекає</em><br>на тебе.</h1>
+  <h1 class="hero-h1">Гамбург.<br>Одна квартира.<br><em>Будь першим.</em></h1>
   <p class="hero-sub">Бот автоматично подає заявки на нові квартири SAGA — цілодобово, раніше ніж інші встигають відкрити сайт.</p>
   <div class="hero-actions">
     <a href="https://t.me/Poschuck_bot" class="btn-primary" target="_blank">
@@ -343,14 +360,13 @@ footer{border-top:0.5px solid var(--border);padding:2rem 2.5rem;display:flex;jus
     <div><div class="stat-num">€19</div><div class="stat-label">Від / місяць</div></div>
   </div>
 </div>
-
 <div class="section">
   <div class="s-tag">Як це працює</div>
   <h2 class="s-title">3 кроки до<br>нової квартири</h2>
   <div class="steps">
-    <div class="step"><div class="step-n">01</div><h3>Реєстрація</h3><p>Підключи акаунт Immomio і встанови фільтри. Все в Telegram — без завантажень.</p></div>
-    <div class="step"><div class="step-n">02</div><h3>Бот працює</h3><p>Бот сканує SAGA і миттєво подає заявки на підходящі квартири.</p></div>
-    <div class="step"><div class="step-n">03</div><h3>Заїзд</h3><p>Отримай повідомлення про запрошення на огляд і просто прийди.</p></div>
+    <div class="step"><div class="step-n">01</div><h3>Підключи Immomio</h3><p>Введи дані від Immomio в боті і встанови фільтри — кількість кімнат і ціна.</p></div>
+    <div class="step"><div class="step-n">02</div><h3>Бот подає заявки</h3><p>Нова квартира на SAGA? Бот подає заявку автоматично — швидше ніж ти встигнеш відкрити сайт.</p></div>
+    <div class="step"><div class="step-n">03</div><h3>Огляд</h3><p>Отримаєш повідомлення як тільки SAGA запросить на огляд. Приходь і дивись квартиру.</p></div>
   </div>
 </div>
 <div class="section">
@@ -370,8 +386,8 @@ footer{border-top:0.5px solid var(--border);padding:2rem 2.5rem;display:flex;jus
   <h2 class="s-title">Просто.<br>Прозоро.</h2>
   <div class="pricing">
     <div class="plan"><div class="plan-name">Стартер</div><div class="plan-price">€19</div><div class="plan-period">на місяць</div><ul class="plan-list"><li>Автоматичні заявки</li><li>Фільтри і сповіщення</li><li>Відстеження статусу</li></ul><a href="https://t.me/Poschuck_bot" class="plan-btn" target="_blank">Почати</a></div>
-    <div class="plan hot"><div class="plan-badge">Популярний</div><div class="plan-name">Стандарт</div><div class="plan-price">€29</div><div class="plan-period">2 місяці · знижка 24%</div><ul class="plan-list"><li>Все зі Стартера</li><li>Пріоритетна підтримка</li><li>Stars або TON</li></ul><a href="https://t.me/Poschuck_bot" class="plan-btn" target="_blank">Почати зараз</a></div>
-    <div class="plan"><div class="plan-name">Преміум</div><div class="plan-price">€39</div><div class="plan-period">4 місяці · +1 місяць у подарунок</div><ul class="plan-list"><li>Все зі Стандарту</li><li>1 бонусний місяць</li><li>Ранній доступ</li></ul><a href="https://t.me/Poschuck_bot" class="plan-btn" target="_blank">Почати</a></div>
+    <div class="plan hot"><div class="plan-badge">Популярний</div><div class="plan-name">Стандарт</div><div class="plan-price">€29</div><div class="plan-period">2 місяці · знижка 24%</div><ul class="plan-list"><li>Все зі Стартера</li><li>Оплата Stars або TON</li><li>Довша підписка — більша знижка</li></ul><a href="https://t.me/Poschuck_bot" class="plan-btn" target="_blank">Почати зараз</a></div>
+    <div class="plan"><div class="plan-name">Преміум</div><div class="plan-price">€39</div><div class="plan-period">4 місяці · +1 місяць у подарунок</div><ul class="plan-list"><li>Все зі Стандарту</li><li>1 бонусний місяць у подарунок</li><li>Найкраща ціна за місяць</li></ul><a href="https://t.me/Poschuck_bot" class="plan-btn" target="_blank">Почати</a></div>
   </div>
 </div>
 <div class="section">
@@ -402,14 +418,14 @@ footer{border-top:0.5px solid var(--border);padding:2rem 2.5rem;display:flex;jus
   <a href="https://t.me/Poschuck_bot" class="btn-primary" style="display:inline-flex;margin:0 auto" target="_blank"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.6 0 12 0zm5.5 8.2-2 9.6c-.2.7-.6.8-1.1.5l-3.1-2.3-1.5 1.4c-.2.2-.3.3-.6.3l.2-3.2 5.8-5.2c.2-.2-.1-.3-.4-.1L7.4 14.7l-3-.9c-.7-.2-.7-.7.1-1L17.3 7.3c.5-.2 1 .1.2.9z"/></svg>Відкрити @Poschuck_bot</a>
   <div class="trial-note">Без ризику · Скасувати будь-коли</div>
 </div>
-<footer><div class="footer-logo">SAGA Apartment Bot</div><div class="footer-links"><a href="https://t.me/Poschuck_bot" target="_blank">@Poschuck_bot</a><a href="https://t.me/sagaAdminn" target="_blank">Підтримка</a></div></footer>
+<footer><div class="footer-logo">SAGA Scout</div><div class="footer-links"><a href="https://t.me/Poschuck_bot" target="_blank">@Poschuck_bot</a><a href="https://t.me/sagaAdminn" target="_blank">Підтримка</a></div></footer>
 </div>
 
 <!-- ═══ ENGLISH ═══ -->
 <div id="l-en" class="ls">
 <div class="hero">
   <div class="hero-badge"><span class="live-dot"></span>Live · SAGA Hamburg</div>
-  <h1 class="hero-h1">Your apartment<br>won't wait<br><em>for you.</em></h1>
+  <h1 class="hero-h1">Hamburg.<br>One apartment.<br><em>Be first.</em></h1>
   <p class="hero-sub">The bot automatically applies to new SAGA apartments — around the clock, before others even open the website.</p>
   <div class="hero-actions">
     <a href="https://t.me/Poschuck_bot" class="btn-primary" target="_blank"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.6 0 12 0zm5.5 8.2-2 9.6c-.2.7-.6.8-1.1.5l-3.1-2.3-1.5 1.4c-.2.2-.3.3-.6.3l.2-3.2 5.8-5.2c.2-.2-.1-.3-.4-.1L7.4 14.7l-3-.9c-.7-.2-.7-.7.1-1L17.3 7.3c.5-.2 1 .1.2.9z"/></svg>Start for free</a>
@@ -421,14 +437,13 @@ footer{border-top:0.5px solid var(--border);padding:2rem 2.5rem;display:flex;jus
     <div><div class="stat-num">€19</div><div class="stat-label">From / month</div></div>
   </div>
 </div>
-
 <div class="section">
   <div class="s-tag">How it works</div>
   <h2 class="s-title">3 steps to<br>your new home</h2>
   <div class="steps">
-    <div class="step"><div class="step-n">01</div><h3>Register</h3><p>Connect your Immomio account and set filters. All in Telegram — no downloads needed.</p></div>
-    <div class="step"><div class="step-n">02</div><h3>Bot runs</h3><p>The bot scans SAGA and instantly applies to matching apartments.</p></div>
-    <div class="step"><div class="step-n">03</div><h3>Move in</h3><p>Get notified when a viewing is confirmed. Just show up.</p></div>
+    <div class="step"><div class="step-n">01</div><h3>Connect Immomio</h3><p>Enter your Immomio credentials in the bot and set filters — rooms and rent price.</p></div>
+    <div class="step"><div class="step-n">02</div><h3>Bot applies</h3><p>New apartment on SAGA? The bot applies automatically — faster than you could open the page.</p></div>
+    <div class="step"><div class="step-n">03</div><h3>Viewing</h3><p>Get a message as soon as SAGA invites you for a viewing. Just show up and check the place.</p></div>
   </div>
 </div>
 <div class="section">
@@ -448,8 +463,8 @@ footer{border-top:0.5px solid var(--border);padding:2rem 2.5rem;display:flex;jus
   <h2 class="s-title">Simple.<br>Transparent.</h2>
   <div class="pricing">
     <div class="plan"><div class="plan-name">Starter</div><div class="plan-price">€19</div><div class="plan-period">per month</div><ul class="plan-list"><li>Automatic applications</li><li>Filters & notifications</li><li>Status tracking</li></ul><a href="https://t.me/Poschuck_bot" class="plan-btn" target="_blank">Start</a></div>
-    <div class="plan hot"><div class="plan-badge">Popular</div><div class="plan-name">Standard</div><div class="plan-price">€29</div><div class="plan-period">2 months · 24% off</div><ul class="plan-list"><li>Everything in Starter</li><li>Priority support</li><li>Stars or TON</li></ul><a href="https://t.me/Poschuck_bot" class="plan-btn" target="_blank">Start now</a></div>
-    <div class="plan"><div class="plan-name">Premium</div><div class="plan-price">€39</div><div class="plan-period">4 months · +1 month free</div><ul class="plan-list"><li>Everything in Standard</li><li>1 bonus month</li><li>Early feature access</li></ul><a href="https://t.me/Poschuck_bot" class="plan-btn" target="_blank">Start</a></div>
+    <div class="plan hot"><div class="plan-badge">Popular</div><div class="plan-name">Standard</div><div class="plan-price">€29</div><div class="plan-period">2 months · 24% off</div><ul class="plan-list"><li>Everything in Starter</li><li>Pay with Stars or TON</li><li>Longer plan, more savings</li></ul><a href="https://t.me/Poschuck_bot" class="plan-btn" target="_blank">Start now</a></div>
+    <div class="plan"><div class="plan-name">Premium</div><div class="plan-price">€39</div><div class="plan-period">4 months · +1 month free</div><ul class="plan-list"><li>Everything in Standard</li><li>1 bonus month free</li><li>Best price per month</li></ul><a href="https://t.me/Poschuck_bot" class="plan-btn" target="_blank">Start</a></div>
   </div>
 </div>
 <div class="section">
@@ -480,7 +495,7 @@ footer{border-top:0.5px solid var(--border);padding:2rem 2.5rem;display:flex;jus
   <a href="https://t.me/Poschuck_bot" class="btn-primary" style="display:inline-flex;margin:0 auto" target="_blank"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.6 0 12 0zm5.5 8.2-2 9.6c-.2.7-.6.8-1.1.5l-3.1-2.3-1.5 1.4c-.2.2-.3.3-.6.3l.2-3.2 5.8-5.2c.2-.2-.1-.3-.4-.1L7.4 14.7l-3-.9c-.7-.2-.7-.7.1-1L17.3 7.3c.5-.2 1 .1.2.9z"/></svg>Open @Poschuck_bot</a>
   <div class="trial-note">No risk · Cancel anytime</div>
 </div>
-<footer><div class="footer-logo">SAGA Apartment Bot</div><div class="footer-links"><a href="https://t.me/Poschuck_bot" target="_blank">@Poschuck_bot</a><a href="https://t.me/sagaAdminn" target="_blank">Support</a></div></footer>
+<footer><div class="footer-logo">SAGA Scout</div><div class="footer-links"><a href="https://t.me/Poschuck_bot" target="_blank">@Poschuck_bot</a><a href="https://t.me/sagaAdminn" target="_blank">Support</a></div></footer>
 </div>
 
 <script>
